@@ -245,6 +245,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -697,11 +698,28 @@
     ctx.fillText(classLines[0]||'', cx1, fy+65); ctx.fillText(classLines[1]||'', cx1, fy+95);
     ctx.fillStyle = C.green; roundedRect(ctx, cx1-60, fy+110, 120, 120, 8); ctx.fill();
     ctx.fillStyle = C.bg; roundedRect(ctx, cx1-50, fy+120, 100, 100, 4); ctx.fill();
-    ctx.fillStyle = C.green;
-    for(let i=0;i<5;i++) for(let j=0;j<5;j++){ if(Math.random()>0.4) ctx.fillRect(cx1-40+i*16, fy+130+j*16, 16, 16); }
-    ctx.fillStyle=C.red; ctx.fillRect(cx1-40, fy+130, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1-32,fy+138,16,16);
-    ctx.fillStyle=C.red; ctx.fillRect(cx1+8, fy+130, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1+16,fy+138,16,16);
-    ctx.fillStyle=C.red; ctx.fillRect(cx1-40, fy+178, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1-32,fy+186,16,16);
+    
+    // Generate Real QR Code
+    let qrUrl = 'https://hhgoa-frame-generator.vercel.app';
+    if (window.location.hostname && !window.location.hostname.includes('localhost')) {
+      qrUrl = window.location.origin;
+    }
+    
+    // QRious might not be loaded yet if render runs too quickly on first load, so we wrap it
+    if (window.QRious) {
+      const qr = new QRious({
+        value: qrUrl,
+        size: 100,
+        backgroundAlpha: 0,
+        foreground: C.green
+      });
+      ctx.drawImage(qr.image, cx1-50, fy+120, 100, 100);
+      
+      // Draw red accent squares over the QR code's alignment patterns for the vintage Goan look
+      ctx.fillStyle = C.red; ctx.fillRect(cx1-47, fy+123, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1-42, fy+128, 10, 10);
+      ctx.fillStyle = C.red; ctx.fillRect(cx1+27, fy+123, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1+32, fy+128, 10, 10);
+      ctx.fillStyle = C.red; ctx.fillRect(cx1-47, fy+197, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1-42, fy+202, 10, 10);
+    }
 
     // Col 2: Beach Bag
     const cx2 = W/2;
