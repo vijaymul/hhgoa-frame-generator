@@ -550,13 +550,8 @@
     const W = 1080, H = 1440;
     canvas.width = W; canvas.height = H;
     ctx.clearRect(0,0,W,H);
-    
-    // Background (Large Green Bleed)
-    ctx.fillStyle = C.green; ctx.fillRect(0,0,W,H);
-    
-    // Inner Cream Card
-    ctx.fillStyle = C.bg;
-    roundedRect(ctx, 22, 22, W-44, H-44, 16); ctx.fill();
+    // Background
+    ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
     
     // Outer border
     ctx.lineWidth = 16; ctx.strokeStyle = C.green;
