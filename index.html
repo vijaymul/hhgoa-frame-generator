@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>HH Goa 2026 — Frame & ID Card Generator</title>
+<meta property="og:title" content="HH Goa 2026 — Frame Generator">
+<meta property="og:description" content="Make your HH Goa 2026 builder frame or badge in seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#170B2E;
+    --night2:#241145;
+    --magenta:#FF3E7A;
+    --mango:#FF9F45;
+    --teal:#12C7AC;
+    --sand:#FFEFD6;
+    --lime:#D6FF3D;
+    --card:#1F1140;
+    --line:rgba(255,239,214,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#0A0514;color:var(--sand);font-family:'Inter',sans-serif;min-height:100vh;}
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  header{position:relative; z-index:1; padding:34px 20px 14px; text-align:center;}
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif; letter-spacing:.15em; text-transform:uppercase;
+    font-size:11px; color:var(--magenta); font-weight:700;
+  }
+  h1{
+    font-family:'Archivo Black',sans-serif; font-size:clamp(32px,8vw,56px);
+    margin:12px 0 8px; line-height:1.05; letter-spacing:-1px; text-transform:uppercase;
+  }
+  h1 span{color:var(--mango);}
+  header p{max-width:480px; margin:0 auto; color:rgba(255,239,214,0.55); font-size:15px; line-height:1.5;}
+  main{
+    position:relative; z-index:1; max-width:1040px; margin:0 auto; padding:22px 16px 80px;
+    display:grid; grid-template-columns:1fr; gap:22px;
+  }
+  @media(min-width:900px){ main{grid-template-columns:380px 1fr; align-items:start;} }
+  
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px; box-shadow:0 12px 30px rgba(0,0,0,0.4);}
+  .tabs{display:flex; gap:8px; margin-bottom:20px;}
+  .tab{
+    flex:1; text-align:center; padding:12px 8px; border-radius:6px;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; text-transform:uppercase;
+    cursor:pointer; border:1px solid var(--line); color:rgba(255,239,214,.55); transition:.15s;
+  }
+  .tab.active{background:var(--sand); color:#000; border-color:transparent;}
+  
+  label{display:block; font-size:12px; font-weight:600; color:rgba(255,239,214,.8); margin:18px 0 8px;}
+  label:first-of-type{margin-top:0;}
+  .dropzone{
+    border:2px dashed rgba(255,239,214,0.2); border-radius:8px; padding:24px 14px;
+    text-align:center; cursor:pointer; transition:.15s;
+  }
+  .dropzone:hover, .dropzone.drag{border-color:var(--magenta); background:rgba(255,62,122,0.06);}
+  .dropzone svg{width:28px;height:28px;opacity:.6; margin-bottom:10px; color:var(--magenta);}
+  .dropzone .dz-text{font-size:14px; font-weight:500;}
+  .dropzone .dz-sub{font-size:12px; color:rgba(255,239,214,.4); margin-top:4px;}
+  .dropzone input{display:none;}
+  .thumb-wrap{display:flex; align-items:center; gap:12px; margin-top:12px;}
+  .thumb-wrap img{width:48px;height:48px;border-radius:6px;object-fit:cover; border:1px solid var(--line);}
+  .thumb-wrap span{font-size:13px; color:rgba(255,239,214,.6); word-break:break-all;}
+  .zoomrow{display:flex; align-items:center; gap:10px; margin-top:12px;}
+  .zoomrow input[type=range]{flex:1; accent-color:var(--magenta);}
+  .zoomrow .zlabel{font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:rgba(255,239,214,.5);}
+  
+  input[type=text]{
+    width:100%; padding:14px 14px; border-radius:6px; border:1px solid var(--line);
+    background:var(--night); color:var(--sand); font-family:'Inter',sans-serif; font-size:16px; outline:none;
+    -webkit-appearance: none;
+  }
+  input[type=text]:focus{border-color:var(--magenta);}
+  
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width: 480px){ .row2{grid-template-columns:1fr;} }
+  
+  .title-pill{
+    margin-top:18px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:rgba(255,239,214,.04); border:1px solid var(--line); border-radius:8px; padding:14px;
+  }
+  .title-pill .lbl{font-size:11px; text-transform:uppercase; font-weight:600; color:rgba(255,239,214,.4); width:100%;}
+  .title-pill strong{font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--lime);}
+  .reroll{
+    margin-left:auto; background:none; border:1px solid var(--line); color:var(--sand);
+    border-radius:6px; width:32px; height:32px; cursor:pointer; font-size:14px;
+  }
+  .reroll:hover{background:rgba(255,255,255,.05);}
+  
+  .actions{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;}
+  button.primary, button.secondary{
+    flex:1; padding:16px 12px; border-radius:8px; border:none; cursor:pointer;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; text-transform:uppercase;
+    min-width: 140px;
+  }
+  button.primary{background:var(--sand); color:#000;}
+  button.secondary{background:transparent; color:var(--sand); border:1px solid var(--line);}
+  button.primary:disabled{opacity:.4; cursor:not-allowed;}
+  
+  .preview-panel{display:flex; flex-direction:column; align-items:center; gap:18px; padding:30px 16px;}
+  .canvas-wrap{position:relative; width:100%; max-width:420px; filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));}
+  canvas{width:100%; height:auto; display:block; border-radius:8px; cursor:grab; touch-action:none; position:relative; z-index:1;}
+  canvas:active{cursor:grabbing;}
+  .hint{font-size:13px; color:rgba(255,239,214,.4); text-align:center; max-width:320px;}
+  
+  /* Animation Layer */
+  .anim-layer {
+    position: absolute;
+    inset: -80px;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+  .floating-item {
+    position: absolute;
+    opacity: 0;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
+  }
+  @keyframes floatLR {
+    0% { left: -20%; opacity: 0; transform: translateY(0px) rotate(-5deg); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 120%; opacity: 0; transform: translateY(-20px) rotate(5deg); }
+  }
+  @keyframes floatRL {
+    0% { left: 120%; opacity: 0; transform: translateY(0px) rotate(5deg) scaleX(-1); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: -20%; opacity: 0; transform: translateY(-20px) rotate(-5deg) scaleX(-1); }
+  }
+  @keyframes bob {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: -15px; }
+  }
+  
+  /* Realistic Waves */
+  .ocean {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 140px;
+    overflow: hidden; border-radius: 0 0 20px 20px;
+  }
+  .wave-layer {
+    position: absolute; bottom: 0; left: 0; width: 200%; height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.5-200 0-250 49.5-394.5 49.5v31.8h800v-31.8z' fill='%2312C7AC'/%3E%3C/svg%3E") repeat-x;
+    background-size: 50% 100%;
+    animation: waveAnim 8s linear infinite;
+  }
+  .wave-layer.w2 {
+    animation-duration: 12s;
+    animation-direction: reverse;
+    opacity: 0.6; background-size: 50% 110%; bottom: -10px;
+  }
+  .wave-layer.w3 {
+    animation-duration: 18s;
+    opacity: 0.3; background-size: 50% 120%; bottom: -20px;
+  }
+  @keyframes waveAnim {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  footer{
+    position:relative; z-index:1; text-align:center; padding:26px 16px 42px;
+    font-size:12px; color:rgba(255,239,214,.3); font-weight:500;
+  }
+  .tag{display:inline-block; background:rgba(255,62,122,.1); color:var(--magenta); padding:3px 10px; border-radius:20px;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <span class="eyebrow">28–31 Oct 2026</span>
+  <h1>Hacker <span>Goa</span></h1>
+  <p>Generate your official profile frame or ID card for HH Goa 2026. No login required, everything runs locally.</p>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="tabs">
+      <div class="tab active" id="tabFrame" data-format="frame">🖼 Profile Frame</div>
+      <div class="tab" id="tabCard" data-format="card">🎫 Builder ID</div>
+    </div>
+
+    <label>Your photo</label>
+    <div class="dropzone" id="dropzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+      <div class="dz-text">Tap to upload or drag photo</div>
+      <div class="dz-sub">JPG, PNG, or HEIC format</div>
+      <input type="file" id="fileInput" accept="image/*,.heic,.heif">
+    </div>
+    
+    <div class="thumb-wrap" id="thumbWrap" style="display:none;">
+      <img id="thumbImg" alt="">
+      <span id="thumbName"></span>
+    </div>
+    <div class="zoomrow" id="zoomrow" style="display:none;">
+      <span class="zlabel">ZOOM</span>
+      <input type="range" id="zoomSlider" min="50" max="300" value="100">
+      <span class="zlabel" id="zoomVal">100%</span>
+    </div>
+
+    <div id="cardFields" style="display:none;">
+      <label>Display Name</label>
+      <input type="text" id="fName" placeholder="e.g. Madhavan Singh" maxlength="24">
+      <div class="row2">
+        <div>
+          <label>Role</label>
+          <input type="text" id="fRole" placeholder="e.g. Full Stack" maxlength="20">
+        </div>
+        <div>
+          <label>Location</label>
+          <input type="text" id="fFrom" placeholder="e.g. Bangalore" maxlength="18">
+        </div>
+      </div>
+      <div class="title-pill">
+        <span class="lbl">Builder Class</span>
+        <strong id="builderTitle">Terminal Wizard</strong>
+        <button class="reroll" id="reroll" title="Reroll class">⟳</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="downloadBtn" disabled>Download</button>
+      <button class="secondary" id="shareBtn" disabled>Share</button>
+    </div>
+  </section>
+
+  <section class="panel preview-panel">
+    <div class="canvas-wrap">
+      <canvas id="outCanvas"></canvas>
+      <div id="animLayer" class="anim-layer"></div>
+    </div>
+    <div class="hint" id="hintText">Upload a photo to see the preview. Drag to re-center, scroll to zoom.</div>
+  </section>
+</main>
+
+<footer>
+  <span class="tag">#FrameInGoa</span> &nbsp; processed locally in your browser
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  
+  let format = 'frame';
+  let userImg = null;
+  let currentTitle = '';
+  let imgPanX = 0, imgPanY = 0, imgScale = 1;
+
+  const C = {
+    bg: '#F5F1E5',
+    green: '#114421',
+    red: '#E01A4F',
+    yellow: '#FFC800',
+    ink: '#1A1A1A'
+  };
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const thumbWrap = document.getElementById('thumbWrap');
+  const thumbImg = document.getElementById('thumbImg');
+  const thumbName = document.getElementById('thumbName');
+  const zoomrow = document.getElementById('zoomrow');
+  const zoomSlider = document.getElementById('zoomSlider');
+  const zoomVal = document.getElementById('zoomVal');
+  const cardFields = document.getElementById('cardFields');
+  const fName = document.getElementById('fName');
+  const fRole = document.getElementById('fRole');
+  const fFrom = document.getElementById('fFrom');
+  const builderTitleEl = document.getElementById('builderTitle');
+  const rerollBtn = document.getElementById('reroll');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const shareBtn = document.getElementById('shareBtn');
+  const canvas = document.getElementById('outCanvas');
+  const ctx = canvas.getContext('2d');
+  const hintText = document.getElementById('hintText');
+  const tabFrame = document.getElementById('tabFrame');
+  const tabCard = document.getElementById('tabCard');
+
+  function checkDownloadState() {
+    if (!userImg) {
+      downloadBtn.disabled = true;
+      shareBtn.disabled = true;
+      return;
+    }
+    if (format === 'card') {
+      if (!fName.value.trim() || !fRole.value.trim() || !fFrom.value.trim()) {
+        downloadBtn.disabled = true;
+        shareBtn.disabled = true;
+        return;
+      }
+    }
+    downloadBtn.disabled = false;
+    shareBtn.disabled = false;
+  }
+
+  function setFormat(f){
+    format = f;
+    tabFrame.classList.toggle('active', f==='frame');
+    tabCard.classList.toggle('active', f==='card');
+    cardFields.style.display = f==='card' ? 'block' : 'none';
+    render();
+    checkDownloadState();
+  }
+  tabFrame.addEventListener('click', ()=>setFormat('frame'));
+  tabCard.addEventListener('click', ()=>setFormat('card'));
+
+  dropzone.addEventListener('click', ()=>fileInput.click());
+  dropzone.addEventListener('dragover', e=>{e.preventDefault(); dropzone.classList.add('drag');});
+  dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
+  dropzone.addEventListener('drop', e=>{
+    e.preventDefault(); dropzone.classList.remove('drag');
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', e=>{
+    if(e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  async function handleFile(file){
+    hintText.textContent = 'Processing photo...';
+    let blob = file;
+    if(/heic|heif/i.test(file.type) || /\.hei[cf]$/i.test(file.name)){
+      try{
+        if(window.heic2any) blob = await heic2any({blob:file, toType:'image/jpeg', quality:0.9});
+      }catch(err){}
+    }
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = ()=>{
+      userImg = img;
+      imgPanX = 0; imgPanY = 0; imgScale = 1;
+      zoomSlider.value = 100; zoomVal.textContent = '100%';
+      thumbWrap.style.display = 'flex';
+      zoomrow.style.display = 'flex';
+      thumbImg.src = url;
+      thumbName.textContent = file.name;
+      hintText.textContent = 'Drag to reposition, scroll to zoom.';
+      render();
+      spawnAnimations();
+      checkDownloadState();
+    };
+    img.onerror = ()=>hintText.textContent = "Error loading image.";
+    img.src = url;
+  }
+  
+  function spawnAnimations() {
+    const layer = document.getElementById('animLayer');
+    layer.innerHTML = `
+      <div class="ocean">
+        <div class="wave-layer w3"></div>
+        <div class="wave-layer w2"></div>
+        <div class="wave-layer"></div>
+      </div>
+    `;
+    
+    let tLeft = false; // ensure one tree left, one right
+    const spawn = (emoji, type) => {
+      const el = document.createElement('div');
+      el.className = 'floating-item';
+      el.textContent = emoji;
+      
+      if (type === 'tree') {
+        el.style.bottom = `${50 + Math.random() * 40}px`; 
+        el.style[tLeft ? 'right' : 'left'] = `${10 + Math.random() * 40}px`;
+        el.style.fontSize = `${65 + Math.random() * 20}px`;
+        el.style.animation = `bob ${3 + Math.random()*2}s ease-in-out infinite`;
+        el.style.opacity = '1';
+        el.style.transform = tLeft ? 'rotate(10deg)' : 'rotate(-10deg)';
+        tLeft = !tLeft;
+      } else {
+        const isLR = Math.random() > 0.5;
+        let dur = 15, top = '50%', fontSize = 30;
+        
+        if (type === 'cloud') {
+          dur = 60 + Math.random() * 40; // very slow
+          top = `${5 + Math.random() * 25}%`;
+          fontSize = 40 + Math.random() * 30;
+        } else if (type === 'bird') {
+          dur = 12 + Math.random() * 10; // fast
+          top = `${10 + Math.random() * 35}%`;
+          fontSize = 20 + Math.random() * 10;
+        } else if (type === 'boat') {
+          dur = 20 + Math.random() * 15; // medium
+          el.style.bottom = `${90 + Math.random() * 40}px`; // near water
+          el.style.top = 'auto';
+          fontSize = 30 + Math.random() * 15;
+        }
+        
+        if (type !== 'boat') el.style.top = top;
+        el.style.fontSize = `${fontSize}px`;
+        const del = Math.random() * 30;
+        const bobDur = 2 + Math.random() * 3;
+        el.style.animation = `${isLR ? 'floatLR' : 'floatRL'} ${dur}s linear -${del}s infinite, bob ${bobDur}s ease-in-out infinite`;
+      }
+      layer.appendChild(el);
+    };
+
+    spawn('🌴', 'tree'); spawn('🌴', 'tree');
+    for(let i=0; i<5; i++) spawn('☁️', 'cloud');
+    for(let i=0; i<3; i++) spawn(['🦅','🕊️','🦜'][Math.floor(Math.random()*3)], 'bird');
+    for(let i=0; i<4; i++) spawn(['⛵','🚤','🐟'][Math.floor(Math.random()*3)], 'boat');
+  }
+
+  zoomSlider.addEventListener('input', ()=>{
+    imgScale = zoomSlider.value / 100;
+    zoomVal.textContent = zoomSlider.value + '%';
+    render();
+  });
+
+  const TITLE_POOL = ["TERMINAL WIZARD", "SUNSET SHIPPER", "BEACH HACKER", "VIBE CODER", "FULL-STACK PIRATE", "DEPLOYMENT MONK"];
+  function rerollTitle(){
+    currentTitle = TITLE_POOL[Math.floor(Math.random()*TITLE_POOL.length)];
+    builderTitleEl.textContent = currentTitle;
+    render();
+  }
+  rerollBtn.addEventListener('click', rerollTitle);
+  [fRole, fName, fFrom].forEach(el => el.addEventListener('input', () => { render(); checkDownloadState(); }));
+  rerollTitle();
+
+  function drawCover(ctx, img, x, y, w, h){
+    const ir = img.width / img.height;
+    const tr = w / h;
+    let sx, sy, sw, sh;
+    if(ir > tr){ sh = img.height; sw = sh * tr; sx = (img.width - sw)/2; sy = 0; }
+    else { sw = img.width; sh = sw / tr; sx = 0; sy = (img.height - sh)/2; }
+    
+    const scaledW = sw / imgScale;
+    const scaledH = sh / imgScale;
+    const panSrcX = imgPanX * (sw / w) / imgScale;
+    const panSrcY = imgPanY * (sh / h) / imgScale;
+    
+    const px = sx + (sw - scaledW)/2 - panSrcX;
+    const py = sy + (sh - scaledH)/2 - panSrcY;
+    
+    ctx.drawImage(img, px, py, scaledW, scaledH, x, y, w, h);
+  }
+  
+  function roundedRect(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+  }
+  
+  function textAlongArc(ctx, text, cx, cy, radius, startAngle, spacingBoost){
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    let angle = startAngle;
+    const widths = [...text].map(ch => ctx.measureText(ch).width);
+    const total = widths.reduce((a,b)=>a+b,0);
+    let a = -total/2 / radius * (spacingBoost||1);
+    for(let i=0;i<text.length;i++){
+      const w = widths[i];
+      const da = (w/2)/radius*(spacingBoost||1);
+      a += da;
+      ctx.save(); ctx.rotate(a); ctx.translate(0, -radius); ctx.rotate(Math.PI/2);
+      ctx.fillText(text[i], 0, 0);
+      ctx.restore();
+      a += da;
+    }
+    ctx.restore();
+  }
+  
+  function drawStampPattern(ctx, cx, cy, r, segments) {
+    for(let i=0; i<segments; i++){
+      const angle = (i/segments)*Math.PI*2;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r, 6, 0, Math.PI*2);
+      ctx.fillStyle = (i%2===0) ? C.yellow : C.bg;
+      ctx.fill();
+    }
+  }
+
+  // Pointer interaction
+  let isDragging = false, lastX = 0, lastY = 0;
+  function getPointerPos(e){
+    const rect = canvas.getBoundingClientRect();
+    let clientX = e.clientX, clientY = e.clientY;
+    if(e.touches && e.touches.length>0){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
+    const scaleX = canvas.width/rect.width, scaleY = canvas.height/rect.height;
+    return {x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY};
+  }
+  function handleDown(e){ if(!userImg) return; isDragging=true; const p=getPointerPos(e); lastX=p.x; lastY=p.y; }
+  function handleMove(e){
+    if(!isDragging || !userImg) return;
+    if(e.cancelable) e.preventDefault();
+    const p = getPointerPos(e);
+    imgPanX += (p.x-lastX); imgPanY += (p.y-lastY);
+    lastX=p.x; lastY=p.y; render();
+  }
+  function handleUp(){ isDragging=false; }
+  function handleWheel(e){
+    if(!userImg) return; e.preventDefault();
+    imgScale -= e.deltaY*0.002;
+    if(imgScale<0.3) imgScale=0.3; if(imgScale>4) imgScale=4;
+    zoomSlider.value = Math.round(imgScale*100); zoomVal.textContent = zoomSlider.value + '%';
+    render();
+  }
+  canvas.addEventListener('mousedown', handleDown);
+  window.addEventListener('mousemove', handleMove, {passive:false});
+  window.addEventListener('mouseup', handleUp);
+  canvas.addEventListener('touchstart', handleDown, {passive:false});
+  window.addEventListener('touchmove', handleMove, {passive:false});
+  window.addEventListener('touchend', handleUp);
+  canvas.addEventListener('wheel', handleWheel, {passive:false});
+
+  function renderFrame(){
+    const S = 1080;
+    canvas.width = S; canvas.height = S;
+    ctx.clearRect(0,0,S,S);
+    
+    ctx.fillStyle = C.green;
+    ctx.fillRect(0,0,S,S);
+    
+    const cx = S/2, cy = S/2, R = 440;
+    
+    // Patterned ring
+    ctx.beginPath(); ctx.arc(cx, cy, R+30, 0, Math.PI*2);
+    ctx.fillStyle = C.red; ctx.fill();
+    drawStampPattern(ctx, cx, cy, R+14, 64);
+    
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.clip();
+    if(userImg) drawCover(ctx, userImg, cx-R, cy-R, R*2, R*2);
+    else {
+      ctx.fillStyle = C.bg; ctx.fillRect(0,0,S,S);
+      ctx.fillStyle = C.green; ctx.font = '600 36px Inter';
+      ctx.textAlign='center'; ctx.fillText('Your Photo', cx, cy);
+    }
+    ctx.restore();
+    
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
+    ctx.lineWidth=6; ctx.strokeStyle = C.yellow; ctx.stroke();
+    
+    ctx.fillStyle = C.yellow; ctx.font = '900 64px "Fraunces"';
+    ctx.textAlign='center'; ctx.fillText('HACKER HOUSE GOA', cx, S - 40);
+  }
+
+  function renderCard(){
+    const W = 1080, H = 1440;
+    canvas.width = W; canvas.height = H;
+    ctx.clearRect(0,0,W,H);
+    
+    // Background
+    ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
+    
+    // Outer border
+    ctx.lineWidth = 16; ctx.strokeStyle = C.green;
+    roundedRect(ctx, 30, 30, W-60, H-60, 16); ctx.stroke();
+    // Inner thin red border
+    ctx.lineWidth = 3; ctx.strokeStyle = C.red;
+    roundedRect(ctx, 45, 45, W-90, H-90, 8); ctx.stroke();
+    
+    // Top Left Stamp
+    ctx.save(); ctx.translate(140, 140); ctx.rotate(-0.08);
+    ctx.fillStyle = C.bg; roundedRect(ctx, -70, -70, 140, 140, 4); ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = C.green; ctx.stroke();
+    ctx.fillStyle = C.red; ctx.font = '800 24px Inter'; ctx.textAlign='center';
+    ctx.fillText('GOA', -25, -35); ctx.font = '600 16px Inter'; ctx.fillText('INDIA', -25, -15);
+    ctx.font = '60px Arial'; ctx.fillText('🌴', 15, 10);
+    ctx.fillStyle = C.yellow; ctx.beginPath(); ctx.arc(0, 20, 25, 0, Math.PI, true); ctx.fill();
+    ctx.fillStyle = C.green; ctx.fillRect(-45, 25, 90, 6);
+    ctx.fillRect(-45, 35, 90, 6); ctx.fillRect(-45, 45, 90, 6);
+    ctx.restore();
+    
+    // Top Right Seal
+    ctx.save(); ctx.translate(W-160, 140);
+    ctx.beginPath(); ctx.arc(0,0, 60, 0, Math.PI*2);
+    ctx.strokeStyle = C.ink; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0, 50, 0, Math.PI*2); ctx.stroke();
+    ctx.font = '700 14px "Space Mono"'; ctx.fillStyle = C.ink;
+    textAlongArc(ctx, 'BUILD IN GOA • SHIP FROM PARADISE • ', 0, 0, 40, -Math.PI/2, 1);
+    ctx.font = '40px Arial'; ctx.fillText('🌴', 0, 8);
+    ctx.restore();
+    
+    // Top Center Pill
+    const pillY = 90, pillW = 160, pillH = 100;
+    ctx.fillStyle = C.red; roundedRect(ctx, W/2 - pillW/2, pillY - pillH/2, pillW, pillH, 16); ctx.fill();
+    ctx.fillStyle = C.yellow; ctx.font = '800 32px "Space Mono"'; ctx.textAlign='center';
+    ctx.fillText('HH', W/2, pillY - 5); ctx.fillText('GOA', W/2, pillY + 30);
+    ctx.font = '800 18px "Space Mono"'; ctx.fillText('2026', W/2, pillY + 55);
+
+    // Left Date Text
+    ctx.save(); ctx.translate(75, 450); ctx.rotate(-Math.PI/2);
+    ctx.fillStyle = C.red; ctx.font = '700 24px "Space Mono"'; ctx.textAlign='center';
+    ctx.fillText('✦ 28 - 31 OCT 2026 ✦', 0, 0); ctx.restore();
+
+    // Right India Text
+    ctx.save(); ctx.translate(W-75, 450); ctx.rotate(Math.PI/2);
+    ctx.fillStyle = C.red; ctx.font = '700 24px "Space Mono"'; ctx.textAlign='center';
+    ctx.fillText('✦ GOA, INDIA ✦', 0, 0); ctx.restore();
+    
+    // Header
+    ctx.fillStyle = C.green; ctx.font = '900 100px "Fraunces"';
+    ctx.textAlign='right'; ctx.fillText('HACKER', W/2 - 80, 280);
+    ctx.textAlign='left'; ctx.fillText('HOUSE', W/2 + 80, 280);
+    ctx.textAlign='center';
+    ctx.fillStyle = C.yellow; ctx.strokeStyle=C.red; ctx.lineWidth=4; ctx.font = '900 80px "Fraunces"';
+    ctx.strokeText('गोआ', W/2, 275); ctx.fillText('गोआ', W/2, 275); // Goa in Devnagari roughly
+
+    // --- Photo Well ---
+    const cx = W/2, cy = 600, photoR = 300;
+    
+    // Outer border pattern
+    ctx.beginPath(); ctx.arc(cx, cy, photoR+24, 0, Math.PI*2);
+    ctx.fillStyle = C.yellow; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, photoR+16, 0, Math.PI*2);
+    ctx.fillStyle = C.red; ctx.fill();
+    drawStampPattern(ctx, cx, cy, photoR+8, 48);
+    
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, photoR, 0, Math.PI*2); ctx.clip();
+    if(userImg) drawCover(ctx, userImg, cx-photoR, cy-photoR, photoR*2, photoR*2);
+    else {
+      ctx.fillStyle = '#D6D1C4'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = C.ink; ctx.font = '600 36px Inter'; ctx.fillText('Your Photo', cx, cy);
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, photoR, 0, Math.PI*2);
+    ctx.lineWidth = 4; ctx.strokeStyle = C.yellow; ctx.stroke();
+    
+    // --- Decorative Emojis (Signpost, House, Scooter, Surfboards) ---
+    ctx.font = '160px Arial'; ctx.textAlign='center';
+    ctx.fillText('🏠', W - 180, cy + 100);
+    ctx.font = '100px Arial';
+    ctx.fillText('🛵', W - 140, cy + 180);
+    
+    ctx.save(); ctx.translate(220, cy + 150); ctx.rotate(-0.1);
+    ctx.font = '120px Arial'; ctx.fillText('🏄‍♂️', -40, 0);
+    ctx.font = '120px Arial'; ctx.fillText('🌴', 50, -40);
+    ctx.restore();
+
+    // Signpost
+    const spX = 180, spY = cy - 40;
+    ctx.fillStyle = '#654321'; roundedRect(ctx, spX-8, spY-60, 16, 220, 4); ctx.fill(); // Pole
+    const drawSign = (sy, color, text, rot) => {
+      ctx.save(); ctx.translate(spX, sy); ctx.rotate(rot);
+      ctx.fillStyle = color; roundedRect(ctx, -80, -20, 160, 40, 4); ctx.fill();
+      ctx.fillStyle = C.ink; ctx.font='800 22px "Space Mono"'; ctx.fillText(text, 0, 8);
+      ctx.restore();
+    };
+    drawSign(spY, C.yellow, 'BUILD', -0.05);
+    drawSign(spY + 50, C.red, 'SHIP', 0.05);
+    drawSign(spY + 100, C.green, 'REPEAT', -0.03);
+    
+    // "Let's Build" Bubble
+    ctx.save(); ctx.translate(W-220, cy-120); ctx.rotate(0.1);
+    ctx.fillStyle = C.yellow; roundedRect(ctx, -80, -40, 160, 80, 12); ctx.fill();
+    ctx.fillStyle = C.ink; ctx.font = '800 24px "Space Mono"';
+    ctx.fillText("LET'S", 0, -5); ctx.fillText("BUILD!", 0, 22);
+    ctx.beginPath(); ctx.moveTo(-20, 40); ctx.lineTo(-40, 70); ctx.lineTo(10, 40); ctx.fill();
+    ctx.restore();
+
+    // Name Tag
+    const nameY = 1000, nameW = 600, nameH = 80;
+    ctx.fillStyle = C.green; roundedRect(ctx, W/2-nameW/2, nameY-nameH/2, nameW, nameH, 12); ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle=C.yellow; roundedRect(ctx, W/2-nameW/2+8, nameY-nameH/2+8, nameW-16, nameH-16, 6); ctx.stroke();
+    
+    ctx.fillStyle = C.bg;
+    let n = (fName.value||'YOUR NAME').toUpperCase().trim();
+    ctx.font = '800 40px "Space Mono"';
+    ctx.fillText(n, W/2, nameY+12);
+    ctx.fillStyle = C.yellow; ctx.font = '24px Arial';
+    ctx.fillText('✦', W/2-nameW/2+40, nameY+8); ctx.fillText('✦', W/2+nameW/2-40, nameY+8);
+
+    // Role Pill
+    const roleY = 1110, roleW = 500, roleH = 50;
+    ctx.fillStyle = C.yellow; roundedRect(ctx, W/2-roleW/2, roleY-roleH/2, roleW, roleH, 25); ctx.fill();
+    ctx.fillStyle = C.red; ctx.font = '800 24px "Space Mono"';
+    const r = (fRole.value||'FULL STACK DEVELOPER').toUpperCase().trim();
+    ctx.fillText(r, W/2, roleY+8);
+    ctx.fillStyle = C.ink; ctx.font = '30px Arial';
+    ctx.fillText('⚡', W/2-roleW/2+40, roleY+10); ctx.fillText('⚡', W/2+roleW/2-40, roleY+10);
+
+    // Footer lines
+    const fy = 1200;
+    ctx.strokeStyle = C.green; ctx.lineWidth = 1; ctx.setLineDash([5,5]);
+    ctx.beginPath(); ctx.moveTo(60, fy); ctx.lineTo(W-60, fy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(W/3, fy+20); ctx.lineTo(W/3, H-60); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W*2/3, fy+20); ctx.lineTo(W*2/3, H-60); ctx.stroke();
+    
+    // Col 1: Class / QR
+    const cx1 = W/6;
+    ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BUILDER CLASS ✦', cx1, fy+30);
+    ctx.fillStyle = C.red; ctx.font = '800 24px "Space Mono"';
+    const classLines = currentTitle.split(' ');
+    ctx.fillText(classLines[0]||'', cx1, fy+65); ctx.fillText(classLines[1]||'', cx1, fy+95);
+    ctx.fillStyle = C.green; roundedRect(ctx, cx1-60, fy+110, 120, 120, 8); ctx.fill();
+    ctx.fillStyle = C.bg; roundedRect(ctx, cx1-50, fy+120, 100, 100, 4); ctx.fill();
+    ctx.fillStyle = C.green;
+    for(let i=0;i<5;i++) for(let j=0;j<5;j++){ if(Math.random()>0.4) ctx.fillRect(cx1-40+i*16, fy+130+j*16, 16, 16); }
+    ctx.fillStyle=C.red; ctx.fillRect(cx1-40, fy+130, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1-32,fy+138,16,16);
+    ctx.fillStyle=C.red; ctx.fillRect(cx1+8, fy+130, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1+16,fy+138,16,16);
+    ctx.fillStyle=C.red; ctx.fillRect(cx1-40, fy+178, 32,32); ctx.fillStyle=C.bg; ctx.fillRect(cx1-32,fy+186,16,16);
+
+    // Col 2: Beach Bag
+    const cx2 = W/2;
+    ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BEACH BAG ✦', cx2, fy+30);
+    const items = [['🥥','COCONUT'],['💻','VS CODE'],['🎧','LO-FI BEATS']];
+    items.forEach((it, i) => {
+      ctx.textAlign = 'left'; ctx.font = '32px Arial'; ctx.fillText(it[0], cx2-70, fy+80 + i*45);
+      ctx.fillStyle = C.green; ctx.font = '700 18px "Space Mono"'; ctx.fillText(it[1], cx2-20, fy+75 + i*45);
+    });
+    // Sun at bottom
+    ctx.fillStyle = C.yellow; ctx.beginPath(); ctx.arc(cx2, H-50, 40, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = C.red; ctx.fillRect(cx2-60, H-55, 120, 6);
+    ctx.font = '40px Arial'; ctx.fillText('🌴', cx2+30, H-45);
+    
+    // Col 3: Shipping
+    const cx3 = W*5/6;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ CURRENTLY SHIPPING ✦', cx3, fy+30);
+    ctx.fillStyle = C.red; ctx.font = '800 26px "Space Mono"';
+    ctx.fillText('BUILDING', cx3, fy+65); ctx.fillText('THE FUTURE', cx3, fy+95);
+    ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('BUILDER ID', cx3, fy+140);
+    ctx.font = '700 18px "Space Mono"';
+    const rid = userImg ? (Math.random()*9000+1000)|0 : 7757;
+    ctx.fillText(`#HH-GOA-${rid}`, cx3, fy+165);
+    
+    ctx.fillStyle = C.green;
+    for(let i=0; i<160; i+=Math.random()*6+2) ctx.fillRect(cx3-80+i, fy+180, Math.random()*4+1, 40);
+  }
+
+  function render(){ if(format==='frame') renderFrame(); else renderCard(); }
+  window.addEventListener('load', ()=>{
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+    render();
+  });
+
+  const fileNameFor = () => format==='frame' ? 'hhgoa2026-seal.png' : 'hhgoa2026-idcard.png';
+  downloadBtn.addEventListener('click', ()=>{
+    const a = document.createElement('a'); a.download = fileNameFor(); a.href = canvas.toDataURL(); a.click();
+  });
+
+  shareBtn.addEventListener('click', async ()=>{
+    canvas.toBlob(async (blob)=>{
+      const file = new File([blob], fileNameFor(), {type:'image/png'});
+      const text = format==='frame' ? 'Generated my #HHGoa2026 Seal! 🌴 #FrameInGoa'
+        : `Ready to build in Goa as a ${currentTitle}! 🌴 #HHGoa2026 #FrameInGoa`;
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], text}); return; }catch(e){}
+      }
+      const a = document.createElement('a'); a.download = fileNameFor(); a.href = URL.createObjectURL(blob); a.click();
+      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+      hintText.textContent = 'Image downloaded! Attach it in the X composer.';
+    }, 'image/png');
+  });
+
+})();
+</script>
+</body>
+</html>
