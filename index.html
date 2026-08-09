@@ -584,11 +584,11 @@
     ctx.restore();
     
     // Top Center Pill
-    const pillY = 90, pillW = 160, pillH = 100;
+    const pillY = 95, pillW = 160, pillH = 110;
     ctx.fillStyle = C.red; roundedRect(ctx, W/2 - pillW/2, pillY - pillH/2, pillW, pillH, 16); ctx.fill();
     ctx.fillStyle = C.yellow; ctx.font = '800 32px "Space Mono"'; ctx.textAlign='center';
-    ctx.fillText('HH', W/2, pillY - 5); ctx.fillText('GOA', W/2, pillY + 30);
-    ctx.font = '800 18px "Space Mono"'; ctx.fillText('2026', W/2, pillY + 55);
+    ctx.fillText('HH', W/2, pillY - 10); ctx.fillText('GOA', W/2, pillY + 20);
+    ctx.font = '800 18px "Space Mono"'; ctx.fillText('2026', W/2, pillY + 45);
 
     // Left Date Text
     ctx.save(); ctx.translate(75, 450); ctx.rotate(-Math.PI/2);
