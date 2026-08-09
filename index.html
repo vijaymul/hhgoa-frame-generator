@@ -683,7 +683,7 @@
     ctx.fillText('⚡', W/2-roleW/2+40, roleY+10); ctx.fillText('⚡', W/2+roleW/2-40, roleY+10);
 
     // Footer lines
-    const fy = 1200;
+    const fy = 1170;
     ctx.strokeStyle = C.green; ctx.lineWidth = 1; ctx.setLineDash([5,5]);
     ctx.beginPath(); ctx.moveTo(60, fy); ctx.lineTo(W-60, fy); ctx.stroke();
     ctx.setLineDash([]);
@@ -695,9 +695,9 @@
     ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BUILDER CLASS ✦', cx1, fy+30);
     ctx.fillStyle = C.red; ctx.font = '800 24px "Space Mono"';
     const classLines = currentTitle.split(' ');
-    ctx.fillText(classLines[0]||'', cx1, fy+65); ctx.fillText(classLines[1]||'', cx1, fy+95);
-    ctx.fillStyle = C.green; roundedRect(ctx, cx1-60, fy+110, 120, 120, 8); ctx.fill();
-    ctx.fillStyle = C.bg; roundedRect(ctx, cx1-50, fy+120, 100, 100, 4); ctx.fill();
+    ctx.fillText(classLines[0]||'', cx1, fy+60); ctx.fillText(classLines[1]||'', cx1, fy+85);
+    ctx.fillStyle = C.green; roundedRect(ctx, cx1-50, fy+105, 100, 100, 8); ctx.fill();
+    ctx.fillStyle = C.bg; roundedRect(ctx, cx1-45, fy+110, 90, 90, 4); ctx.fill();
     
     // Generate Real QR Code
     let qrUrl = 'https://hhgoa-frame-generator.vercel.app';
@@ -705,17 +705,16 @@
       qrUrl = window.location.origin;
     }
     
-    // QRious might not be loaded yet if render runs too quickly on first load, so we wrap it
     if (window.QRious) {
       const qrCanvas = document.createElement('canvas');
       new QRious({
         element: qrCanvas,
         value: qrUrl,
-        size: 100,
+        size: 90,
         background: C.bg,
         foreground: C.green
       });
-      ctx.drawImage(qrCanvas, cx1-50, fy+120, 100, 100);
+      ctx.drawImage(qrCanvas, cx1-45, fy+110, 90, 90);
     }
 
     // Col 2: Beach Bag
@@ -723,27 +722,27 @@
     ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BEACH BAG ✦', cx2, fy+30);
     const items = [['🥥','COCONUT'],['💻','VS CODE'],['🎧','LO-FI BEATS']];
     items.forEach((it, i) => {
-      ctx.textAlign = 'left'; ctx.font = '32px Arial'; ctx.fillText(it[0], cx2-70, fy+80 + i*45);
-      ctx.fillStyle = C.green; ctx.font = '700 18px "Space Mono"'; ctx.fillText(it[1], cx2-20, fy+75 + i*45);
+      ctx.textAlign = 'left'; ctx.font = '28px Arial'; ctx.fillText(it[0], cx2-65, fy+75 + i*35);
+      ctx.fillStyle = C.green; ctx.font = '700 16px "Space Mono"'; ctx.fillText(it[1], cx2-20, fy+70 + i*35);
     });
     // Sun at bottom
-    ctx.fillStyle = C.yellow; ctx.beginPath(); ctx.arc(cx2, H-50, 40, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = C.red; ctx.fillRect(cx2-60, H-55, 120, 6);
-    ctx.font = '40px Arial'; ctx.fillText('🌴', cx2+30, H-45);
+    ctx.fillStyle = C.yellow; ctx.beginPath(); ctx.arc(cx2, fy+195, 30, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = C.red; ctx.fillRect(cx2-45, fy+190, 90, 5);
+    ctx.font = '32px Arial'; ctx.fillText('🌴', cx2+25, fy+200);
     
     // Col 3: Shipping
     const cx3 = W*5/6;
     ctx.textAlign = 'center';
     ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ CURRENTLY SHIPPING ✦', cx3, fy+30);
-    ctx.fillStyle = C.red; ctx.font = '800 26px "Space Mono"';
-    ctx.fillText('BUILDING', cx3, fy+65); ctx.fillText('THE FUTURE', cx3, fy+95);
-    ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('BUILDER ID', cx3, fy+140);
-    ctx.font = '700 18px "Space Mono"';
+    ctx.fillStyle = C.red; ctx.font = '800 24px "Space Mono"';
+    ctx.fillText('BUILDING', cx3, fy+60); ctx.fillText('THE FUTURE', cx3, fy+85);
+    ctx.fillStyle = C.ink; ctx.font = '700 14px "Space Mono"'; ctx.fillText('BUILDER ID', cx3, fy+135);
+    ctx.font = '700 16px "Space Mono"';
     const rid = userImg ? (Math.random()*9000+1000)|0 : 7757;
-    ctx.fillText(`#HH-GOA-${rid}`, cx3, fy+165);
+    ctx.fillText(`#HH-GOA-${rid}`, cx3, fy+155);
     
     ctx.fillStyle = C.green;
-    for(let i=0; i<160; i+=Math.random()*6+2) ctx.fillRect(cx3-80+i, fy+180, Math.random()*4+1, 40);
+    for(let i=0; i<140; i+=Math.random()*6+2) ctx.fillRect(cx3-70+i, fy+170, Math.random()*3+1, 35);
   }
 
   function render(){ if(format==='frame') renderFrame(); else renderCard(); }
