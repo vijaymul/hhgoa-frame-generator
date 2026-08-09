@@ -707,18 +707,15 @@
     
     // QRious might not be loaded yet if render runs too quickly on first load, so we wrap it
     if (window.QRious) {
-      const qr = new QRious({
+      const qrCanvas = document.createElement('canvas');
+      new QRious({
+        element: qrCanvas,
         value: qrUrl,
         size: 100,
-        backgroundAlpha: 0,
+        background: C.bg,
         foreground: C.green
       });
-      ctx.drawImage(qr.image, cx1-50, fy+120, 100, 100);
-      
-      // Draw red accent squares over the QR code's alignment patterns for the vintage Goan look
-      ctx.fillStyle = C.red; ctx.fillRect(cx1-47, fy+123, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1-42, fy+128, 10, 10);
-      ctx.fillStyle = C.red; ctx.fillRect(cx1+27, fy+123, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1+32, fy+128, 10, 10);
-      ctx.fillStyle = C.red; ctx.fillRect(cx1-47, fy+197, 20, 20); ctx.fillStyle = C.bg; ctx.fillRect(cx1-42, fy+202, 10, 10);
+      ctx.drawImage(qrCanvas, cx1-50, fy+120, 100, 100);
     }
 
     // Col 2: Beach Bag
