@@ -4,8 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputSection = document.getElementById("input-section");
     const resultSection = document.getElementById("result-section");
     const form = document.getElementById("generator-form");
+    
+    // Inputs
     const photoUpload = document.getElementById("photo-upload");
-    const previewImage = document.getElementById("preview-image");
+    const imageToCrop = document.getElementById("image-to-crop");
+    const cropperContainer = document.getElementById("cropper-container");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+    
+    const nameInput = document.getElementById("builder-name");
+    const roleInput = document.getElementById("builder-role");
+    const titleInput = document.getElementById("builder-title");
+    const rerollBtn = document.getElementById("reroll-btn");
+    const xHandleInput = document.getElementById("x-handle");
+
     const resultImage = document.getElementById("result-image");
     const downloadBtn = document.getElementById("download-btn");
     const shareBtn = document.getElementById("share-btn");
@@ -13,42 +25,96 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("card-canvas");
     const ctx = canvas.getContext("2d");
 
-    let uploadedImageObj = null;
+    let cropper = null;
+
+    // Fun Builder Titles
+    const builderTitles = [
+        "Nocturnal Hot-Reload Cowboy",
+        "Console.log Connoisseur",
+        "Div Centering Specialist",
+        "Production Break Artist",
+        "Stack Overflow Dependent",
+        "Terminal Wizard",
+        "Vim Exit Strategist",
+        "10x Bug Creator",
+        "Full Stack Magician",
+        "CSS Whisperer",
+        "Code Golf Champion"
+    ];
+
+    function getRandomTitle() {
+        return builderTitles[Math.floor(Math.random() * builderTitles.length)];
+    }
 
     // 1. Splash Screen Logic
     setTimeout(() => {
         splashScreen.classList.add("hidden");
         appContainer.classList.remove("hidden");
+        
+        // Auto-fill a random title initially
+        titleInput.value = getRandomTitle();
     }, 3000);
 
-    // 2. Handle Image Upload & Preview
+    // Reroll Title logic
+    rerollBtn.addEventListener("click", () => {
+        titleInput.value = getRandomTitle();
+    });
+
+    // 2. Handle Image Upload & Cropper Initialization
     photoUpload.addEventListener("change", function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = function(event) {
-            uploadedImageObj = new Image();
-            uploadedImageObj.onload = () => {
-                previewImage.src = event.target.result;
-                previewImage.style.display = "block";
-            };
-            uploadedImageObj.src = event.target.result;
+            imageToCrop.src = event.target.result;
+            cropperContainer.classList.remove("hidden");
+            
+            // Destroy previous cropper if exists
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            // Initialize Cropper
+            cropper = new Cropper(imageToCrop, {
+                aspectRatio: 1,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                restore: false,
+                guides: false,
+                center: false,
+                highlight: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+                toggleDragModeOnDblclick: false,
+            });
         };
         reader.readAsDataURL(file);
+    });
+
+    // Cropper Zoom Controls
+    zoomInBtn.addEventListener("click", () => {
+        if (cropper) cropper.zoom(0.1);
+    });
+    
+    zoomOutBtn.addEventListener("click", () => {
+        if (cropper) cropper.zoom(-0.1);
     });
 
     // 3. Generate ID Card
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        if (!uploadedImageObj) {
-            alert("Please upload a photo first.");
+        if (!cropper) {
+            alert("Please upload and crop a photo first.");
             return;
         }
 
-        const name = document.getElementById("builder-name").value.toUpperCase();
-        const role = document.getElementById("builder-role").value.toUpperCase();
+        const name = nameInput.value.toUpperCase();
+        const role = roleInput.value.toUpperCase();
+        const title = titleInput.value;
+        const xHandle = xHandleInput.value.trim();
 
         const generateBtn = document.getElementById("generate-btn");
         const originalText = generateBtn.innerHTML;
@@ -56,9 +122,24 @@ document.addEventListener("DOMContentLoaded", () => {
         generateBtn.disabled = true;
 
         try {
-            await generateCard(name, role);
+            // Get cropped image canvas
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 400,
+                height: 400,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+            
+            const croppedImageObj = new Image();
+            croppedImageObj.src = croppedCanvas.toDataURL();
+            
+            await new Promise((resolve) => croppedImageObj.onload = resolve);
+            
+            await generateCard(name, role, title, xHandle, croppedImageObj);
+            
             inputSection.classList.add("hidden");
             resultSection.classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
             console.error("Error generating card:", error);
             alert("Something went wrong. Please try again.");
@@ -68,30 +149,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    async function generateCard(name, role) {
+    async function generateCard(name, role, title, xHandle, croppedImageObj) {
         return new Promise((resolve, reject) => {
             const bgImage = new Image();
             bgImage.crossOrigin = "Anonymous";
-            // We use the generated background image
             bgImage.src = "bg.png";
             
             bgImage.onload = () => {
-                // Set canvas size to match background
                 const width = bgImage.width;
                 const height = bgImage.height;
                 canvas.width = width;
                 canvas.height = height;
 
-                // Draw background
                 ctx.drawImage(bgImage, 0, 0, width, height);
 
-                // Add dark overlay for better text readability at the top/bottom if needed
-                // But let's assume the background is good as is, just draw text.
-                
                 // Draw Profile Picture (Circle in the middle)
                 const centerX = width / 2;
-                const centerY = height / 2.2; // Slightly above center
-                const radius = width * 0.18; // 18% of width
+                const centerY = height * 0.4;
+                const radius = width * 0.18;
                 
                 ctx.save();
                 ctx.beginPath();
@@ -99,94 +174,78 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.closePath();
                 ctx.clip();
                 
-                // Draw the uploaded image, scaled and centered to fit the circle
-                const imgAspect = uploadedImageObj.width / uploadedImageObj.height;
-                let drawWidth, drawHeight, drawX, drawY;
-                
-                if (imgAspect > 1) { // Landscape
-                    drawHeight = radius * 2;
-                    drawWidth = drawHeight * imgAspect;
-                    drawX = centerX - drawWidth / 2;
-                    drawY = centerY - radius;
-                } else { // Portrait
-                    drawWidth = radius * 2;
-                    drawHeight = drawWidth / imgAspect;
-                    drawX = centerX - radius;
-                    drawY = centerY - drawHeight / 2;
-                }
-                
-                ctx.drawImage(uploadedImageObj, drawX, drawY, drawWidth, drawHeight);
+                // Draw cropped square image directly centered in the circle
+                ctx.drawImage(croppedImageObj, centerX - radius, centerY - radius, radius * 2, radius * 2);
                 ctx.restore();
 
-                // Draw a border around the profile picture
+                // Draw Borders
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
                 ctx.lineWidth = 12;
-                ctx.strokeStyle = "#ff0066"; // Accent pink
+                ctx.strokeStyle = "#ff0066";
                 ctx.stroke();
                 
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius + 8, 0, Math.PI * 2, true);
                 ctx.lineWidth = 4;
-                ctx.strokeStyle = "#f1c40f"; // Accent yellow
+                ctx.strokeStyle = "#f1c40f";
                 ctx.stroke();
 
-                // Draw Header Text (HACKER HOUSE GOA)
-                ctx.textAlign = "center";
-                ctx.fillStyle = "#f1c40f";
-                ctx.font = "bold " + (width * 0.08) + "px 'Playfair Display', serif";
-                ctx.fillText("HACKER HOUSE", width / 2, height * 0.15);
-                
-                ctx.fillStyle = "#ff0066";
-                ctx.font = "bold " + (width * 0.05) + "px sans-serif";
-                ctx.fillText("गोवा", width / 2, height * 0.22);
-                
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold " + (width * 0.02) + "px 'Inter', sans-serif";
-                ctx.letterSpacing = "5px"; // Note: letterSpacing in canvas requires modern browsers, we can simulate or ignore.
-                ctx.fillText("28 - 31 OCT 2026", width / 2, height * 0.26);
-
                 // Draw Name
-                const nameY = height * 0.75;
+                const nameY = height * 0.65;
                 ctx.fillStyle = "#ffffff";
                 
-                // Draw name background box
                 ctx.font = "bold " + (width * 0.045) + "px 'Inter', sans-serif";
                 const nameMetrics = ctx.measureText(name);
                 const boxWidth = Math.max(nameMetrics.width + 100, width * 0.5);
                 const boxHeight = width * 0.08;
                 
-                ctx.fillStyle = "#0d2818"; // Dark green box
+                // Name Box
+                ctx.fillStyle = "#0d2818";
                 ctx.fillRect(width/2 - boxWidth/2, nameY - boxHeight + (width*0.02), boxWidth, boxHeight);
                 ctx.strokeStyle = "#f1c40f";
                 ctx.lineWidth = 3;
                 ctx.strokeRect(width/2 - boxWidth/2, nameY - boxHeight + (width*0.02), boxWidth, boxHeight);
 
                 ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
                 ctx.fillText(name, width / 2, nameY);
 
                 // Draw Role
-                ctx.fillStyle = "#f1c40f"; // Yellow
+                ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold " + (width * 0.03) + "px 'Inter', sans-serif";
                 ctx.fillText("⚡ " + role + " ⚡", width / 2, nameY + height * 0.06);
 
-                // Draw Footer / Badge details
+                // Draw Title
+                ctx.fillStyle = "#ffffff";
+                ctx.font = (width * 0.025) + "px 'Inter', sans-serif";
+                ctx.fillText(title, width / 2, nameY + height * 0.12);
+
+                // Draw X Handle
+                if (xHandle) {
+                    const handleText = xHandle.startsWith('@') ? xHandle : '@' + xHandle;
+                    ctx.fillStyle = "#a0b0a5";
+                    ctx.font = (width * 0.02) + "px 'Inter', sans-serif";
+                    ctx.fillText(handleText, width / 2, nameY + height * 0.16);
+                }
+
+                // Draw Footer Details
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "bold " + (width * 0.025) + "px 'Inter', sans-serif";
+                ctx.textAlign = "left";
                 ctx.fillText("BUILDER ID", width * 0.25, height * 0.88);
                 ctx.fillStyle = "#ff0066";
                 ctx.fillText("#HH-GOA-" + Math.floor(1000 + Math.random() * 9000), width * 0.25, height * 0.92);
 
                 ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "right";
                 ctx.fillText("CURRENTLY SHIPPING", width * 0.75, height * 0.88);
                 ctx.fillStyle = "#ff0066";
                 ctx.fillText("BUILDING THE FUTURE", width * 0.75, height * 0.92);
 
-                // Export to image element
                 const dataUrl = canvas.toDataURL("image/png");
                 resultImage.src = dataUrl;
                 
-                // Setup download button
                 downloadBtn.onclick = () => {
                     const link = document.createElement("a");
                     link.download = `HH_Goa_2026_${name.replace(/\s+/g, '_')}.png`;
@@ -202,11 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 4. Share on X
     shareBtn.addEventListener("click", () => {
-        // Twitter sharing usually takes a URL or text. Since we generate the image client-side, 
-        // they can't attach it automatically via a web intent URL. 
-        // We prompt them to copy/paste or save and share.
-        // As a fallback, we create the pre-filled text.
-        const text = encodeURIComponent("Built my Hacker House Goa Builder Card! 🌴🚀\n\nExcited to build, ship, and connect with amazing builders in Goa.\n\n#FrameInGoa #HHGoa2026");
+        const text = encodeURIComponent(`Built my Hacker House Goa Builder Card! 🌴🚀\n\nExcited to build, ship, and connect with amazing builders in Goa.\n\n#FrameInGoa #HHGoa2026`);
         const url = `https://twitter.com/intent/tweet?text=${text}`;
         window.open(url, "_blank");
     });
@@ -216,7 +271,16 @@ document.addEventListener("DOMContentLoaded", () => {
         resultSection.classList.add("hidden");
         inputSection.classList.remove("hidden");
         form.reset();
-        previewImage.style.display = "none";
-        uploadedImageObj = null;
+        
+        // Reset cropper
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        cropperContainer.classList.add("hidden");
+        imageToCrop.src = "";
+        
+        // Pick new random title
+        titleInput.value = getRandomTitle();
     });
 });

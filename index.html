@@ -6,19 +6,32 @@
     <title>HH Goa 2026 - Builder ID Card Generator</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Cropper.js for zooming and cropping -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Splash Screen -->
     <div id="splash-screen" class="active">
-        <h1 class="splash-title">HACKER<br><span class="hindi-text">गोवा</span></h1>
+        <div class="splash-content">
+            <div class="splash-header">
+                <span>GOA, INDIA</span>
+                <span>28-31 OCT 2026</span>
+            </div>
+            <h1 class="splash-title">HACKER<br>HOUSE</h1>
+            <div class="hindi-text-overlay">गोवा</div>
+            <div class="splash-footer">
+                <span class="line"></span>
+                <span>BUILDER ID</span>
+                <span class="line"></span>
+            </div>
+        </div>
     </div>
 
     <!-- App Container -->
     <div id="app-container" class="hidden">
         <header>
             <div class="logo">HH GOA 2026</div>
-            <h2>Generate Your Builder Card</h2>
-            <p>Upload a photo, enter your details, and claim your spot.</p>
+            <h2>Builder Card Generator</h2>
         </header>
 
         <main>
@@ -31,7 +44,17 @@
                             <input type="file" id="photo-upload" accept="image/png, image/jpeg, image/jpg, image/heic" required>
                             <span class="upload-btn">Choose Photo</span>
                         </div>
-                        <img id="preview-image" style="display: none;" />
+                    </div>
+
+                    <!-- Cropper Modal / Container -->
+                    <div id="cropper-container" class="hidden">
+                        <div class="img-container">
+                            <img id="image-to-crop" src="">
+                        </div>
+                        <div class="cropper-controls">
+                            <button type="button" id="zoom-in" class="secondary-btn">🔍 Zoom In</button>
+                            <button type="button" id="zoom-out" class="secondary-btn">🔍 Zoom Out</button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -42,6 +65,20 @@
                     <div class="form-group">
                         <label for="builder-role">Stack / Role</label>
                         <input type="text" id="builder-role" placeholder="E.g. Full Stack Developer" required maxlength="30">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-with-action">
+                            <label for="builder-title">Builder Title</label>
+                            <button type="button" id="reroll-btn" class="text-btn">↻ REROLL</button>
+                        </div>
+                        <input type="text" id="builder-title" required maxlength="40">
+                        <p class="help-text">Auto-generated from name + stack — reroll or edit freely.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="x-handle">X Handle (Optional)</label>
+                        <input type="text" id="x-handle" placeholder="yourhandle" maxlength="20">
                     </div>
 
                     <button type="submit" id="generate-btn" class="primary-btn">Generate ID Card 🚀</button>
@@ -61,7 +98,7 @@
                     </button>
                     <button id="share-btn" class="action-btn share-btn">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-                        Share on X
+                        Share to X
                     </button>
                 </div>
                 <button id="reset-btn" class="secondary-btn">Make another one</button>
@@ -72,6 +109,7 @@
     <!-- Hidden Canvas for Drawing -->
     <canvas id="card-canvas" style="display: none;"></canvas>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
