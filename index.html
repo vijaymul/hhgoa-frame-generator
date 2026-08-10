@@ -6,7 +6,6 @@
     <title>HH Goa 2026 - Builder ID Card Generator</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <!-- Cropper.js for zooming and cropping -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 </head>
 <body>
@@ -27,83 +26,87 @@
         </div>
     </div>
 
-    <!-- App Container -->
-    <div id="app-container" class="hidden">
-        <header>
-            <div class="logo">HH GOA 2026</div>
-            <h2>Builder Card Generator</h2>
-        </header>
+    <!-- App Container (Split Layout) -->
+    <div id="app-container" class="hidden split-layout">
+        
+        <!-- Left Panel: Form Controls -->
+        <div class="left-panel">
+            <header>
+                <div class="logo">HH GOA 2026</div>
+                <h2>Builder Card Generator</h2>
+            </header>
 
-        <main>
-            <!-- Input Form -->
-            <section id="input-section">
-                <form id="generator-form">
-                    <div class="form-group">
-                        <label for="photo-upload">Profile Photo</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="photo-upload" accept="image/png, image/jpeg, image/jpg, image/heic" required>
-                            <span class="upload-btn">Choose Photo</span>
-                        </div>
+            <form id="generator-form">
+                <div class="form-group">
+                    <label for="photo-upload">Profile Photo</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="photo-upload" accept="image/png, image/jpeg, image/jpg, image/heic" required>
+                        <span class="upload-btn">Choose Photo</span>
                     </div>
+                </div>
 
-                    <!-- Cropper Modal / Container -->
-                    <div id="cropper-container" class="hidden">
-                        <div class="img-container">
-                            <img id="image-to-crop" src="">
-                        </div>
-                        <div class="cropper-controls">
-                            <button type="button" id="zoom-in" class="secondary-btn">🔍 Zoom In</button>
-                            <button type="button" id="zoom-out" class="secondary-btn">🔍 Zoom Out</button>
-                        </div>
+                <!-- Cropper -->
+                <div id="cropper-container" class="hidden">
+                    <div class="img-container">
+                        <img id="image-to-crop" src="">
                     </div>
-
-                    <div class="form-group">
-                        <label for="builder-name">Name</label>
-                        <input type="text" id="builder-name" placeholder="E.g. Madhavan Singh" required maxlength="25">
+                    <div class="cropper-controls">
+                        <button type="button" id="zoom-in" class="secondary-btn">🔍 Zoom In</button>
+                        <button type="button" id="zoom-out" class="secondary-btn">🔍 Zoom Out</button>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="builder-role">Stack / Role</label>
-                        <input type="text" id="builder-role" placeholder="E.g. Full Stack Developer" required maxlength="30">
+                <div class="form-group">
+                    <label for="builder-name">Name</label>
+                    <input type="text" id="builder-name" placeholder="E.g. Madhavan Singh" required maxlength="25">
+                </div>
+
+                <div class="form-group">
+                    <label for="builder-role">Stack / Role</label>
+                    <input type="text" id="builder-role" placeholder="E.g. Full Stack Developer" required maxlength="30">
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-action">
+                        <label for="builder-title">Builder Title</label>
+                        <button type="button" id="reroll-btn" class="text-btn">↻ REROLL</button>
                     </div>
+                    <input type="text" id="builder-title" required maxlength="40">
+                    <p class="help-text">Auto-generated from name + stack — reroll or edit freely.</p>
+                </div>
 
-                    <div class="form-group">
-                        <div class="label-with-action">
-                            <label for="builder-title">Builder Title</label>
-                            <button type="button" id="reroll-btn" class="text-btn">↻ REROLL</button>
-                        </div>
-                        <input type="text" id="builder-title" required maxlength="40">
-                        <p class="help-text">Auto-generated from name + stack — reroll or edit freely.</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="x-handle">X Handle (Optional)</label>
-                        <input type="text" id="x-handle" placeholder="yourhandle" maxlength="20">
-                    </div>
-
-                    <button type="submit" id="generate-btn" class="primary-btn">Generate ID Card 🚀</button>
-                </form>
-            </section>
-
-            <!-- Result Section -->
-            <section id="result-section" class="hidden">
-                <div class="result-card">
-                    <img id="result-image" alt="Your Builder Card">
+                <div class="form-group">
+                    <label for="x-handle">X Handle (Optional)</label>
+                    <input type="text" id="x-handle" placeholder="yourhandle" maxlength="20">
                 </div>
                 
                 <div class="actions">
-                    <button id="download-btn" class="action-btn download-btn">
+                    <button type="button" id="download-btn" class="action-btn download-btn">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                         Download
                     </button>
-                    <button id="share-btn" class="action-btn share-btn">
+                    <button type="button" id="share-btn" class="action-btn share-btn">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
                         Share to X
                     </button>
                 </div>
-                <button id="reset-btn" class="secondary-btn">Make another one</button>
-            </section>
-        </main>
+                <p class="help-text">Add a photo and your details to share. The preview updates instantly.</p>
+            </form>
+        </div>
+
+        <!-- Right Panel: Live Preview -->
+        <div class="right-panel">
+            <div class="lanyard-container">
+                <div class="lanyard-strap"></div>
+                <div class="lanyard-clip"></div>
+                <div class="id-card-wrapper">
+                    <img id="result-image" alt="Live Preview" src="bg.png">
+                    <!-- The canvas is drawn in the background and converted to the src of result-image -->
+                </div>
+            </div>
+            <div class="preview-bg-text">HACKER<br>HOUSE</div>
+        </div>
+
     </div>
 
     <!-- Hidden Canvas for Drawing -->

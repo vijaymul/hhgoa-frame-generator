@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const splashScreen = document.getElementById("splash-screen");
     const appContainer = document.getElementById("app-container");
-    const inputSection = document.getElementById("input-section");
-    const resultSection = document.getElementById("result-section");
-    const form = document.getElementById("generator-form");
     
     // Inputs
     const photoUpload = document.getElementById("photo-upload");
@@ -21,11 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultImage = document.getElementById("result-image");
     const downloadBtn = document.getElementById("download-btn");
     const shareBtn = document.getElementById("share-btn");
-    const resetBtn = document.getElementById("reset-btn");
+    
     const canvas = document.getElementById("card-canvas");
     const ctx = canvas.getContext("2d");
 
     let cropper = null;
+    let isGenerating = false;
 
     // Fun Builder Titles
     const builderTitles = [
@@ -51,16 +49,23 @@ document.addEventListener("DOMContentLoaded", () => {
         splashScreen.classList.add("hidden");
         appContainer.classList.remove("hidden");
         
-        // Auto-fill a random title initially
+        // Initial title and render
         titleInput.value = getRandomTitle();
+        triggerRender();
     }, 3000);
 
-    // Reroll Title logic
+    // 2. Real-time Listeners
+    nameInput.addEventListener("input", triggerRender);
+    roleInput.addEventListener("input", triggerRender);
+    titleInput.addEventListener("input", triggerRender);
+    xHandleInput.addEventListener("input", triggerRender);
+
     rerollBtn.addEventListener("click", () => {
         titleInput.value = getRandomTitle();
+        triggerRender();
     });
 
-    // 2. Handle Image Upload & Cropper Initialization
+    // 3. Image Upload & Cropper Logic
     photoUpload.addEventListener("change", function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -70,12 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
             imageToCrop.src = event.target.result;
             cropperContainer.classList.remove("hidden");
             
-            // Destroy previous cropper if exists
             if (cropper) {
                 cropper.destroy();
             }
 
-            // Initialize Cropper
             cropper = new Cropper(imageToCrop, {
                 aspectRatio: 1,
                 viewMode: 1,
@@ -88,66 +91,67 @@ document.addEventListener("DOMContentLoaded", () => {
                 cropBoxMovable: false,
                 cropBoxResizable: false,
                 toggleDragModeOnDblclick: false,
+                ready() {
+                    triggerRender();
+                },
+                cropend() {
+                    triggerRender();
+                },
+                zoom() {
+                    // Timeout ensures we get the state after zoom completes
+                    setTimeout(triggerRender, 100);
+                }
             });
         };
         reader.readAsDataURL(file);
     });
 
-    // Cropper Zoom Controls
     zoomInBtn.addEventListener("click", () => {
-        if (cropper) cropper.zoom(0.1);
+        if (cropper) {
+            cropper.zoom(0.1);
+            setTimeout(triggerRender, 100);
+        }
     });
     
     zoomOutBtn.addEventListener("click", () => {
-        if (cropper) cropper.zoom(-0.1);
+        if (cropper) {
+            cropper.zoom(-0.1);
+            setTimeout(triggerRender, 100);
+        }
     });
 
-    // 3. Generate ID Card
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    // 4. Drawing Logic
+    async function triggerRender() {
+        if (isGenerating) return;
+        isGenerating = true;
         
-        if (!cropper) {
-            alert("Please upload and crop a photo first.");
-            return;
-        }
-
-        const name = nameInput.value.toUpperCase();
-        const role = roleInput.value.toUpperCase();
-        const title = titleInput.value;
-        const xHandle = xHandleInput.value.trim();
-
-        const generateBtn = document.getElementById("generate-btn");
-        const originalText = generateBtn.innerHTML;
-        generateBtn.innerHTML = "Generating...";
-        generateBtn.disabled = true;
-
         try {
-            // Get cropped image canvas
-            const croppedCanvas = cropper.getCroppedCanvas({
-                width: 400,
-                height: 400,
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
-            });
+            const name = nameInput.value.toUpperCase() || "YOUR NAME";
+            const role = roleInput.value.toUpperCase() || "YOUR ROLE";
+            const title = titleInput.value || "";
+            const xHandle = xHandleInput.value.trim();
             
-            const croppedImageObj = new Image();
-            croppedImageObj.src = croppedCanvas.toDataURL();
-            
-            await new Promise((resolve) => croppedImageObj.onload = resolve);
-            
+            let croppedImageObj = null;
+            if (cropper) {
+                const croppedCanvas = cropper.getCroppedCanvas({
+                    width: 400,
+                    height: 400,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+                
+                croppedImageObj = new Image();
+                croppedImageObj.src = croppedCanvas.toDataURL();
+                await new Promise((resolve) => croppedImageObj.onload = resolve);
+            }
+
             await generateCard(name, role, title, xHandle, croppedImageObj);
-            
-            inputSection.classList.add("hidden");
-            resultSection.classList.remove("hidden");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
-            console.error("Error generating card:", error);
-            alert("Something went wrong. Please try again.");
+            console.error("Error rendering:", error);
         } finally {
-            generateBtn.innerHTML = originalText;
-            generateBtn.disabled = false;
+            isGenerating = false;
         }
-    });
+    }
 
     async function generateCard(name, role, title, xHandle, croppedImageObj) {
         return new Promise((resolve, reject) => {
@@ -163,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ctx.drawImage(bgImage, 0, 0, width, height);
 
-                // Draw Profile Picture (Circle in the middle)
                 const centerX = width / 2;
                 const centerY = height * 0.4;
                 const radius = width * 0.18;
@@ -174,8 +177,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.closePath();
                 ctx.clip();
                 
-                // Draw cropped square image directly centered in the circle
-                ctx.drawImage(croppedImageObj, centerX - radius, centerY - radius, radius * 2, radius * 2);
+                // Draw Cropped Image or Placeholder
+                if (croppedImageObj) {
+                    ctx.drawImage(croppedImageObj, centerX - radius, centerY - radius, radius * 2, radius * 2);
+                } else {
+                    // Dark placeholder circle if no image uploaded yet
+                    ctx.fillStyle = "#0c1410";
+                    ctx.fill();
+                    ctx.fillStyle = "#5a705e";
+                    ctx.font = (width * 0.03) + "px 'Inter', sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("ADD PHOTO", centerX, centerY);
+                }
                 ctx.restore();
 
                 // Draw Borders
@@ -235,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.textAlign = "left";
                 ctx.fillText("BUILDER ID", width * 0.25, height * 0.88);
                 ctx.fillStyle = "#ff0066";
-                ctx.fillText("#HH-GOA-" + Math.floor(1000 + Math.random() * 9000), width * 0.25, height * 0.92);
+                ctx.fillText("#HH-GOA-2026", width * 0.25, height * 0.92);
 
                 ctx.fillStyle = "#ffffff";
                 ctx.textAlign = "right";
@@ -259,28 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. Share on X
+    // 5. Share on X
     shareBtn.addEventListener("click", () => {
         const text = encodeURIComponent(`Built my Hacker House Goa Builder Card! 🌴🚀\n\nExcited to build, ship, and connect with amazing builders in Goa.\n\n#FrameInGoa #HHGoa2026`);
         const url = `https://twitter.com/intent/tweet?text=${text}`;
         window.open(url, "_blank");
-    });
-
-    // 5. Reset
-    resetBtn.addEventListener("click", () => {
-        resultSection.classList.add("hidden");
-        inputSection.classList.remove("hidden");
-        form.reset();
-        
-        // Reset cropper
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
-        }
-        cropperContainer.classList.add("hidden");
-        imageToCrop.src = "";
-        
-        // Pick new random title
-        titleInput.value = getRandomTitle();
     });
 });

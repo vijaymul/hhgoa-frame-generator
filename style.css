@@ -16,14 +16,9 @@
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
-    background-image: radial-gradient(circle at top right, var(--secondary-green) 0%, transparent 40%),
-                      radial-gradient(circle at bottom left, #083319 0%, transparent 40%);
     color: var(--text-light);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* Splash Screen (Image 2 Match) */
@@ -118,43 +113,54 @@ body {
     background-color: #5a705e;
 }
 
-/* App Container */
-#app-container {
-    width: 100%;
-    max-width: 500px;
-    padding: 2rem;
+/* App Container - Split Layout */
+.split-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease 0.3s;
+    transition: opacity 0.5s ease;
 }
 
-#app-container:not(.hidden) {
+.split-layout:not(.hidden) {
     opacity: 1;
-    transform: translateY(0);
+}
+
+.left-panel {
+    width: 400px;
+    padding: 2rem;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    background: #040d08;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.left-panel::-webkit-scrollbar-thumb {
+    background-color: #164a2c;
 }
 
 header {
-    text-align: center;
     margin-bottom: 2rem;
 }
 
 .logo {
     display: inline-block;
-    background: var(--accent-pink);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    color: #5a705e;
     font-weight: 800;
     font-size: 0.8rem;
-    margin-bottom: 1rem;
-    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
 }
 
 h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-    font-family: 'Playfair Display', serif;
-    color: var(--accent-yellow);
+    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--text-light);
 }
 
 /* Form Styles */
@@ -166,7 +172,7 @@ label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #a0b0a5;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -185,33 +191,33 @@ label {
     border: none;
     color: #a0b0a5;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     letter-spacing: 1px;
 }
 .text-btn:hover { color: var(--accent-yellow); }
 
 .help-text {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #6a7a70;
     margin-top: 0.5rem;
 }
 
 input[type="text"] {
     width: 100%;
-    padding: 14px 16px;
+    padding: 12px 14px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
     color: white;
-    font-size: 1rem;
-    font-family: 'Inter', monospace;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
     transition: all 0.3s ease;
 }
 
 input[type="text"]:focus {
     outline: none;
     border-color: var(--accent-yellow);
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.5);
 }
 
 .file-upload-wrapper {
@@ -235,24 +241,24 @@ input[type="text"]:focus {
     display: block;
     width: 100%;
     padding: 16px;
-    border: 2px dashed rgba(255,255,255,0.2);
+    border: 1px dashed rgba(255,255,255,0.1);
     border-radius: 8px;
     text-align: center;
-    color: #ccc;
+    color: #a0b0a5;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
-    background: rgba(0,0,0,0.2);
 }
 
 .file-upload-wrapper:hover .upload-btn {
-    border-color: var(--accent-pink);
+    border-color: var(--secondary-green);
     color: white;
-    background: rgba(255,0,102,0.1);
+    background: rgba(255,255,255,0.02);
 }
 
 /* Cropper Styles */
 #cropper-container {
     margin-bottom: 1.5rem;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.5);
     padding: 1rem;
     border-radius: 8px;
 }
@@ -260,18 +266,14 @@ input[type="text"]:focus {
 
 .img-container {
     width: 100%;
-    max-height: 300px;
+    max-height: 250px;
     margin-bottom: 1rem;
     display: flex;
     justify-content: center;
 }
 .img-container img { max-width: 100%; }
 
-/* Circular crop view in CropperJS */
-.cropper-view-box,
-.cropper-face {
-  border-radius: 50%;
-}
+.cropper-view-box, .cropper-face { border-radius: 50%; }
 
 .cropper-controls {
     display: flex;
@@ -287,44 +289,10 @@ button {
     transition: all 0.3s ease;
 }
 
-.primary-btn {
-    width: 100%;
-    padding: 16px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent-yellow), #f39c12);
-    color: #000;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-    box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
-}
-
-.primary-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.5);
-}
-
-/* Result Section */
-#result-section { text-align: center; }
-#result-section.hidden, #input-section.hidden { display: none; }
-
-.result-card {
-    background: rgba(255,255,255,0.05);
-    padding: 1rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-#result-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
 .actions {
     display: flex;
     gap: 1rem;
+    margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
@@ -336,33 +304,141 @@ button {
     gap: 8px;
     padding: 12px;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .download-btn {
-    background: var(--primary-green);
-    border: 1px solid #333;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
     color: white;
 }
-.download-btn:hover { background: #111; }
+.download-btn:hover { background: rgba(255,255,255,0.05); }
 
 .share-btn {
-    background: #8b8000; /* Dark yellow/olive */
+    background: #8b8000;
     color: black;
-    border: 1px solid #736b00;
 }
 .share-btn:hover { background: #736b00; }
 
 .secondary-btn {
     background: transparent;
     color: #aaa;
-    border: 1px solid #555;
+    border: 1px solid #333;
     border-radius: 4px;
     padding: 6px 12px;
     font-size: 0.8rem;
 }
 .secondary-btn:hover { color: white; background: rgba(255,255,255,0.1); }
 
-@media (max-width: 400px) {
-    .actions { flex-direction: column; }
+
+/* Right Panel: Live Preview */
+.right-panel {
+    flex: 1;
+    background: radial-gradient(circle at center, #0a1f12 0%, #030a05 100%);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* To let lanyard hang from top */
+    overflow: hidden;
+    padding-top: 0;
+}
+
+/* Background Faded Text */
+.preview-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 15vw;
+    color: rgba(255,255,255,0.02);
+    text-align: center;
+    line-height: 0.8;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Lanyard Effect */
+.lanyard-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: sway 6s ease-in-out infinite alternate;
+    transform-origin: top center;
+    height: 100%;
+}
+
+.lanyard-strap {
+    width: 25px;
+    height: 25vh;
+    background: #000; /* Base color */
+    background-image: linear-gradient(to bottom, #111 0%, #222 100%);
+    border-left: 2px solid #333;
+    border-right: 2px solid #333;
+    position: relative;
+}
+
+/* Text on lanyard (vertical) */
+.lanyard-strap::after {
+    content: "HACKER HOUSE GOA 2026";
+    color: var(--accent-yellow);
+    font-size: 0.7rem;
+    font-weight: bold;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    letter-spacing: 2px;
+}
+
+.lanyard-clip {
+    width: 60px;
+    height: 15px;
+    background: #444;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.id-card-wrapper {
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    height: 60vh; /* Responsive height */
+    max-height: 800px;
+    aspect-ratio: 1 / 1.414; /* Standard ID ratio */
+}
+
+.id-card-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes sway {
+    0% { transform: rotate(-1deg); }
+    100% { transform: rotate(1deg); }
+}
+
+@media (max-width: 768px) {
+    .split-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .left-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .right-panel {
+        min-height: 100vh;
+        padding-top: 0;
+    }
+    .lanyard-strap {
+        height: 10vh;
+    }
 }
