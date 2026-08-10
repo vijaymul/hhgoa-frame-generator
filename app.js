@@ -206,7 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Draw Name
                 const nameY = height * 0.65;
-                ctx.fillStyle = "#ffffff";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
                 
                 ctx.font = "bold " + (width * 0.045) + "px 'Inter', sans-serif";
                 const nameMetrics = ctx.measureText(name);
@@ -215,32 +216,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 // Name Box
                 ctx.fillStyle = "#0d2818";
-                ctx.fillRect(width/2 - boxWidth/2, nameY - boxHeight + (width*0.02), boxWidth, boxHeight);
+                ctx.fillRect(width/2 - boxWidth/2, nameY - boxHeight/2, boxWidth, boxHeight);
                 ctx.strokeStyle = "#f1c40f";
                 ctx.lineWidth = 3;
-                ctx.strokeRect(width/2 - boxWidth/2, nameY - boxHeight + (width*0.02), boxWidth, boxHeight);
+                ctx.strokeRect(width/2 - boxWidth/2, nameY - boxHeight/2, boxWidth, boxHeight);
 
                 ctx.fillStyle = "#ffffff";
-                ctx.textAlign = "center";
                 ctx.fillText(name, width / 2, nameY);
 
                 // Draw Role
+                const roleY = nameY + boxHeight/2 + (height * 0.04);
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold " + (width * 0.03) + "px 'Inter', sans-serif";
-                ctx.fillText("⚡ " + role + " ⚡", width / 2, nameY + height * 0.06);
+                ctx.fillText("⚡ " + role + " ⚡", width / 2, roleY);
 
                 // Draw Title
+                const titleY = roleY + (height * 0.035);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = (width * 0.025) + "px 'Inter', sans-serif";
-                ctx.fillText(title, width / 2, nameY + height * 0.12);
+                ctx.fillText(title, width / 2, titleY);
 
                 // Draw X Handle
                 if (xHandle) {
                     const handleText = xHandle.startsWith('@') ? xHandle : '@' + xHandle;
                     ctx.fillStyle = "#a0b0a5";
                     ctx.font = (width * 0.02) + "px 'Inter', sans-serif";
-                    ctx.fillText(handleText, width / 2, nameY + height * 0.16);
+                    ctx.fillText(handleText, width / 2, titleY + (height * 0.03));
                 }
+
+                // Reset text baseline for footer
+                ctx.textBaseline = "alphabetic";
 
                 // Draw Footer Details
                 ctx.fillStyle = "#ffffff";
