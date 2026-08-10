@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Dark placeholder circle if no image uploaded yet
                     ctx.fillStyle = "#0c1410";
                     ctx.fill();
-                    ctx.fillStyle = "#5a705e";
+                    ctx.fillStyle = "#ffffff";
                     ctx.font = (width * 0.03) + "px 'Inter', sans-serif";
                     ctx.textAlign = "center";
                     ctx.fillText("ADD PHOTO", centerX, centerY);
@@ -225,13 +225,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.fillText(name, width / 2, nameY);
 
                 // Draw Role
-                const roleY = nameY + boxHeight/2 + (height * 0.04);
+                const roleY = nameY + boxHeight/2 + (width * 0.05);
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold " + (width * 0.03) + "px 'Inter', sans-serif";
                 ctx.fillText("⚡ " + role + " ⚡", width / 2, roleY);
 
                 // Draw Title
-                const titleY = roleY + (height * 0.035);
+                const titleY = roleY + (width * 0.04);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = (width * 0.025) + "px 'Inter', sans-serif";
                 ctx.fillText(title, width / 2, titleY);
@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const handleText = xHandle.startsWith('@') ? xHandle : '@' + xHandle;
                     ctx.fillStyle = "#a0b0a5";
                     ctx.font = (width * 0.02) + "px 'Inter', sans-serif";
-                    ctx.fillText(handleText, width / 2, titleY + (height * 0.03));
+                    ctx.fillText(handleText, width / 2, titleY + (width * 0.035));
                 }
 
                 // Reset text baseline for footer
