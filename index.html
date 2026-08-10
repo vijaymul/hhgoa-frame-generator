@@ -99,9 +99,16 @@
             <div class="lanyard-container">
                 <div class="lanyard-strap"></div>
                 <div class="lanyard-clip"></div>
-                <div class="id-card-wrapper">
-                    <img id="result-image" alt="Live Preview" src="bg.png">
-                    <!-- The canvas is drawn in the background and converted to the src of result-image -->
+                <div class="id-card-wrapper" id="flip-card">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <img id="result-image" alt="Live Preview" src="bg.png">
+                            <!-- The canvas is drawn in the background and converted to the src of result-image -->
+                        </div>
+                        <div class="card-back">
+                            <img id="result-image-back" alt="Back of Card">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="preview-bg-text">HACKER<br>HOUSE</div>
@@ -111,6 +118,7 @@
 
     <!-- Hidden Canvas for Drawing -->
     <canvas id="card-canvas" style="display: none;"></canvas>
+    <canvas id="card-canvas-back" style="display: none;"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="app.js"></script>

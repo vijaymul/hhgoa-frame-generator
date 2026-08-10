@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const splashScreen = document.getElementById("splash-screen");
     const appContainer = document.getElementById("app-container");
+    const flipCard = document.getElementById("flip-card");
     
     // Inputs
     const photoUpload = document.getElementById("photo-upload");
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const xHandleInput = document.getElementById("x-handle");
 
     const resultImage = document.getElementById("result-image");
+    const resultImageBack = document.getElementById("result-image-back");
     const downloadBtn = document.getElementById("download-btn");
     const shareBtn = document.getElementById("share-btn");
     
@@ -24,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let cropper = null;
     let isGenerating = false;
+    
+    // Unique ID for this session
+    const builderId = Math.floor(1000 + Math.random() * 9000);
 
     // Fun Builder Titles
     const builderTitles = [
@@ -49,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
         splashScreen.classList.add("hidden");
         appContainer.classList.remove("hidden");
         
-        // Initial title and render
         titleInput.value = getRandomTitle();
         triggerRender();
     }, 3000);
@@ -65,7 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
         triggerRender();
     });
 
-    // 3. Image Upload & Cropper Logic
+    // 3. Card Flip Logic
+    flipCard.addEventListener("click", () => {
+        flipCard.classList.toggle("flipped");
+    });
+
+    // 4. Image Upload & Cropper Logic
     photoUpload.addEventListener("change", function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -98,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     triggerRender();
                 },
                 zoom() {
-                    // Timeout ensures we get the state after zoom completes
                     setTimeout(triggerRender, 100);
                 }
             });
@@ -120,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 4. Drawing Logic
+    // 5. Drawing Logic
     async function triggerRender() {
         if (isGenerating) return;
         isGenerating = true;
@@ -146,6 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             await generateCard(name, role, title, xHandle, croppedImageObj);
+            
+            // Also generate the back of the card
+            if (canvas.width > 0 && canvas.height > 0) {
+                await generateBackCard(name, xHandle, canvas.width, canvas.height);
+            }
+
         } catch (error) {
             console.error("Error rendering:", error);
         } finally {
@@ -165,6 +179,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.width = width;
                 canvas.height = height;
 
+                // Dynamically set aspect ratio of the CSS card container to perfectly match the uploaded image
+                if (flipCard) {
+                    flipCard.style.aspectRatio = `${width} / ${height}`;
+                }
+
                 ctx.drawImage(bgImage, 0, 0, width, height);
 
                 const centerX = width / 2;
@@ -177,16 +196,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.closePath();
                 ctx.clip();
                 
-                // Draw Cropped Image or Placeholder
                 if (croppedImageObj) {
                     ctx.drawImage(croppedImageObj, centerX - radius, centerY - radius, radius * 2, radius * 2);
                 } else {
-                    // Dark placeholder circle if no image uploaded yet
                     ctx.fillStyle = "#0c1410";
                     ctx.fill();
                     ctx.fillStyle = "#ffffff";
                     ctx.font = (width * 0.03) + "px 'Inter', sans-serif";
                     ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
                     ctx.fillText("ADD PHOTO", centerX, centerY);
                 }
                 ctx.restore();
@@ -209,12 +227,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const boxWidth = Math.max(nameMetrics.width + 100, width * 0.5);
                 const boxHeight = width * 0.08;
                 
-                // Draw Name (Overlapping the circle slightly)
                 const nameY = centerY + radius + (boxHeight / 4);
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
                 
-                // Name Box
                 ctx.fillStyle = "#0d2818";
                 ctx.fillRect(width/2 - boxWidth/2, nameY - boxHeight/2, boxWidth, boxHeight);
                 ctx.strokeStyle = "#f1c40f";
@@ -224,32 +240,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.fillStyle = "#ffffff";
                 ctx.fillText(name, width / 2, nameY);
 
-                // ---------------------------------------------------
-                // Dynamic Data Panel (Hides baked-in template text)
-                // ---------------------------------------------------
+                // Dynamic Data Panel
                 const dataBoxTop = nameY + boxHeight/2;
                 const dataBoxHeight = xHandle ? (width * 0.15) : (width * 0.12);
                 
                 ctx.fillStyle = "#0d2818";
                 ctx.fillRect(width * 0.1, dataBoxTop, width * 0.8, dataBoxHeight);
-                
                 ctx.strokeStyle = "#164a2c";
                 ctx.lineWidth = 2;
                 ctx.strokeRect(width * 0.1, dataBoxTop, width * 0.8, dataBoxHeight);
 
-                // Draw Role
                 const roleY = dataBoxTop + (width * 0.04);
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold " + (width * 0.03) + "px 'Inter', sans-serif";
                 ctx.fillText("⚡ " + role + " ⚡", width / 2, roleY);
 
-                // Draw Title
                 const titleY = roleY + (width * 0.04);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = (width * 0.025) + "px 'Inter', sans-serif";
                 ctx.fillText(title, width / 2, titleY);
 
-                // Draw X Handle
                 if (xHandle) {
                     const handleText = xHandle.startsWith('@') ? xHandle : '@' + xHandle;
                     ctx.fillStyle = "#a0b0a5";
@@ -257,15 +267,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     ctx.fillText(handleText, width / 2, titleY + (width * 0.035));
                 }
 
-                // ---------------------------------------------------
-                // Footer Panel (Hides baked-in template footer)
-                // ---------------------------------------------------
+                // Footer Panel
                 const footerTop = height * 0.84;
                 const footerHeight = height - footerTop;
                 
                 ctx.fillStyle = "#0c1410";
                 ctx.fillRect(0, footerTop, width, footerHeight);
-                
                 ctx.strokeStyle = "#ff0066";
                 ctx.lineWidth = 4;
                 ctx.beginPath();
@@ -273,10 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.lineTo(width, footerTop);
                 ctx.stroke();
 
-                // Reset text baseline for footer
                 ctx.textBaseline = "alphabetic";
 
-                // Draw Footer Details
                 const footerTextY1 = footerTop + (footerHeight * 0.4);
                 const footerTextY2 = footerTop + (footerHeight * 0.7);
 
@@ -285,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.textAlign = "left";
                 ctx.fillText("BUILDER ID", width * 0.1, footerTextY1);
                 ctx.fillStyle = "#f1c40f";
-                ctx.fillText("#HH-GOA-" + Math.floor(1000 + Math.random() * 9000), width * 0.1, footerTextY2);
+                ctx.fillText("#HH-GOA-" + builderId, width * 0.1, footerTextY2);
 
                 ctx.fillStyle = "#ffffff";
                 ctx.textAlign = "right";
@@ -309,7 +314,74 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. Share on X
+    async function generateBackCard(name, xHandle, width, height) {
+        return new Promise((resolve) => {
+            const canvasBack = document.getElementById("card-canvas-back");
+            const ctxBack = canvasBack.getContext("2d");
+            
+            canvasBack.width = width;
+            canvasBack.height = height;
+
+            // Background
+            ctxBack.fillStyle = "#06110a";
+            ctxBack.fillRect(0, 0, width, height);
+            
+            // Border
+            ctxBack.strokeStyle = "#164a2c";
+            ctxBack.lineWidth = width * 0.02;
+            ctxBack.strokeRect(width * 0.04, width * 0.04, width * 0.92, height - width * 0.08);
+
+            // Header Text
+            ctxBack.fillStyle = "#f1c40f";
+            ctxBack.textAlign = "center";
+            ctxBack.textBaseline = "middle";
+            ctxBack.font = "bold " + (width * 0.06) + "px 'Playfair Display', serif";
+            ctxBack.fillText("HACKER HOUSE GOA", width / 2, height * 0.15);
+
+            ctxBack.fillStyle = "#ffffff";
+            ctxBack.font = (width * 0.04) + "px 'Inter', sans-serif";
+            ctxBack.fillText(name, width / 2, height * 0.25);
+
+            // Fetch and draw QR Code
+            // We use a public QR code API
+            const handleText = xHandle ? (xHandle.startsWith('@') ? xHandle : '@' + xHandle) : 'HHGoa2026';
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://twitter.com/${handleText}`;
+            
+            const qrImage = new Image();
+            qrImage.crossOrigin = "Anonymous";
+            qrImage.src = qrUrl;
+            
+            qrImage.onload = () => {
+                const qrSize = width * 0.5;
+                const qrX = width / 2 - qrSize / 2;
+                const qrY = height * 0.35;
+                
+                // Draw white background for QR
+                ctxBack.fillStyle = "#ffffff";
+                ctxBack.fillRect(qrX - 20, qrY - 20, qrSize + 40, qrSize + 40);
+                ctxBack.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+
+                // Footer Text
+                ctxBack.fillStyle = "#ff0066";
+                ctxBack.font = "bold " + (width * 0.04) + "px 'Inter', sans-serif";
+                ctxBack.fillText("#HH-GOA-" + builderId, width / 2, height * 0.85);
+                
+                ctxBack.fillStyle = "#a0b0a5";
+                ctxBack.font = (width * 0.025) + "px 'Inter', sans-serif";
+                ctxBack.fillText("Scan to connect", width / 2, height * 0.9);
+
+                resultImageBack.src = canvasBack.toDataURL("image/png");
+                resolve();
+            };
+            
+            qrImage.onerror = () => {
+                resultImageBack.src = canvasBack.toDataURL("image/png");
+                resolve();
+            };
+        });
+    }
+
+    // 6. Share on X
     shareBtn.addEventListener("click", () => {
         const text = encodeURIComponent(`Built my Hacker House Goa Builder Card! 🌴🚀\n\nExcited to build, ship, and connect with amazing builders in Goa.\n\n#FrameInGoa #HHGoa2026`);
         const url = `https://twitter.com/intent/tweet?text=${text}`;
