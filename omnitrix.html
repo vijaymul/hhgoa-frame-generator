@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HH Goa Frame Selector - Omnitrix</title>
+  <style>
+    body {
+      background-color: #02140c; /* HH Goa dark bg */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .omnitrix-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dial {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 15px solid #111;
+      background: radial-gradient(circle, #fee101 0%, #d4b800 50%, #9e8900 100%);
+      box-shadow: 0 0 30px rgba(254, 225, 1, 0.4), inset 0 0 30px #000;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .dial:hover {
+      box-shadow: 0 0 50px rgba(254, 225, 1, 0.7), inset 0 0 30px #000;
+    }
+    
+    .cross-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(20% 0, 80% 0, 50% 40%, 80% 100%, 20% 100%, 50% 60%);
+      background: #111;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .frame-display {
+      position: absolute;
+      width: 80px;
+      height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      border: 4px solid #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      transition: opacity 0.2s, transform 0.2s, background 0.3s, border-color 0.3s;
+      z-index: 5;
+      background-color: #1a5c3a;
+      color: #fee101;
+      line-height: 1.2;
+    }
+
+    .dial-markers {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    .marker {
+      position: absolute;
+      width: 15px;
+      height: 30px;
+      background-color: #111;
+      top: -15px;
+      left: 50%;
+      transform-origin: 50% 175px; /* radius + border/2 */
+      border-radius: 5px;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+    }
+
+    button {
+      background: #111;
+      color: #fee101;
+      border: 2px solid #d4b800;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(254, 225, 1, 0.2);
+      transition: 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    button:hover {
+      background: #fee101;
+      color: #111;
+      box-shadow: 0 0 20px rgba(254, 225, 1, 0.6);
+    }
+    
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .frame-label {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      font-weight: 700;
+      color: #fee101;
+      text-shadow: 0 0 15px rgba(254, 225, 1, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      white-space: nowrap;
+    }
+    
+    .pop-animation {
+      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes pop {
+      0% { transform: scale(1) rotate(var(--current-rotation)); }
+      50% { transform: scale(1.15) rotate(var(--current-rotation)); box-shadow: 0 0 60px #fee101, inset 0 0 50px #000;}
+      100% { transform: scale(1) rotate(var(--current-rotation)); }
+    }
+    
+    .flash-overlay {
+      position: absolute;
+      inset: 0;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+    
+    .flash-animation {
+      animation: flash 0.5s ease-out;
+    }
+    
+    @keyframes flash {
+      0% { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+
+    .status-text {
+      position: absolute;
+      bottom: -150px;
+      font-family: monospace;
+      color: #fff;
+      font-size: 14px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="omnitrix-container">
+    <div class="frame-label" id="frameLabel">Classic Green</div>
+    
+    <div class="dial" id="dial" onclick="activateOmnitrix()" style="--current-rotation: 0deg;">
+      <div class="dial-markers" id="markers"></div>
+      <div class="cross-lines"></div>
+      <div class="frame-display" id="frameDisplay">HH<br>GOA</div>
+      <div class="flash-overlay" id="flashOverlay"></div>
+    </div>
+    
+    <div class="controls">
+      <button onclick="rotateDial(-1)">◀ Prev</button>
+      <button onclick="rotateDial(1)">Next ▶</button>
+    </div>
+
+    <div class="status-text" id="statusText">System Ready. Select a Frame.</div>
+  </div>
+
+  <script>
+    // Hacker House Goa Frames
+    const frames = [
+      { name: 'Classic Green', bg: '#1a5c3a', color: '#fee101', border: '#fff' },
+      { name: 'Neon Yellow', bg: '#fee101', color: '#02140c', border: '#02140c' },
+      { name: 'Deep Dark', bg: '#02140c', color: '#fee101', border: '#1a5c3a' },
+      { name: 'Ocean Blue', bg: '#0077b6', color: '#ffffff', border: '#00b4d8' },
+      { name: 'Cyber Pink', bg: '#d90429', color: '#ffffff', border: '#ef233c' },
+      { name: 'Minimal White', bg: '#ffffff', color: '#02140c', border: '#cccccc' },
+      { name: 'Hacker Terminal', bg: '#000000', color: '#00ff00', border: '#00ff00' }
+    ];
+    
+    let currentIndex = 0;
+    let rotation = 0;
+    
+    const dial = document.getElementById('dial');
+    const display = document.getElementById('frameDisplay');
+    const frameLabel = document.getElementById('frameLabel');
+    const markersContainer = document.getElementById('markers');
+    const flashOverlay = document.getElementById('flashOverlay');
+    const statusText = document.getElementById('statusText');
+
+    // Create markers around the dial
+    const markerCount = frames.length;
+    for(let i = 0; i < markerCount; i++) {
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.style.transform = `translateX(-50%) rotate(${i * (360/markerCount)}deg)`;
+      markersContainer.appendChild(marker);
+    }
+
+    function updateDisplay(index) {
+      const frame = frames[index];
+      display.style.backgroundColor = frame.bg;
+      display.style.color = frame.color;
+      display.style.borderColor = frame.border;
+      frameLabel.innerText = frame.name;
+    }
+
+    // Initialize first frame
+    updateDisplay(currentIndex);
+
+    function rotateDial(direction) {
+      // Calculate new index
+      currentIndex = (currentIndex + direction + frames.length) % frames.length;
+      
+      // Update rotation
+      rotation += direction * (360 / frames.length);
+      dial.style.setProperty('--current-rotation', `${rotation}deg`);
+      dial.style.transform = `rotate(${rotation}deg)`;
+      
+      // Animate display change
+      display.style.opacity = 0;
+      // Counter-rotate the display so the frame is always upright
+      display.style.transform = `scale(0.5) rotate(${-rotation}deg)`; 
+      
+      setTimeout(() => {
+        updateDisplay(currentIndex);
+        display.style.opacity = 1;
+        display.style.transform = `scale(1) rotate(${-rotation}deg)`;
+      }, 200); // Wait half of the transition time
+    }
+    
+    function activateOmnitrix() {
+      // Trigger pop animation
+      dial.classList.remove('pop-animation');
+      flashOverlay.classList.remove('flash-animation');
+      
+      // Force reflow
+      void dial.offsetWidth;
+      
+      dial.classList.add('pop-animation');
+      flashOverlay.classList.add('flash-animation');
+      
+      const selectedFrame = frames[currentIndex].name;
+      statusText.innerText = `>>> ACTIVATED: ${selectedFrame} <<<`;
+      statusText.style.color = '#fee101';
+      
+      setTimeout(() => {
+        statusText.style.color = '#fff';
+      }, 1500);
+    }
+    
+    // Initial counter-rotation for display
+    display.style.transform = `rotate(0deg)`;
+  </script>
+</body>
+</html>
