@@ -1,249 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>HH Goa 2026 — Frame & ID Card Generator</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌴</text></svg>">
-<meta property="og:title" content="HH Goa 2026 — Frame Generator">
-<meta property="og:description" content="Make your HH Goa 2026 builder frame or badge in seconds.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --night:#0A1F13;
-    --night2:#0F301D;
-    --magenta:#FF3E7A;
-    --mango:#FF9F45;
-    --teal:#12C7AC;
-    --sand:#FFEFD6;
-    --lime:#D6FF3D;
-    --card:#1F1140;
-    --line:rgba(255,239,214,0.14);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:#0A0514;color:var(--sand);font-family:'Inter',sans-serif;min-height:100vh;}
-  .grain{
-    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-  header{position:relative; z-index:1; padding:34px 20px 14px; text-align:center;}
-  .eyebrow{
-    font-family:'Space Grotesk',sans-serif; letter-spacing:.15em; text-transform:uppercase;
-    font-size:11px; color:var(--magenta); font-weight:700;
-  }
-  h1{
-    font-family:'Archivo Black',sans-serif; font-size:clamp(32px,8vw,56px);
-    margin:12px 0 8px; line-height:1.05; letter-spacing:-1px; text-transform:uppercase;
-  }
-  h1 span{color:var(--mango);}
-  header p{max-width:480px; margin:0 auto; color:rgba(255,239,214,0.55); font-size:15px; line-height:1.5;}
-  main{
-    position:relative; z-index:1; max-width:1040px; margin:0 auto; padding:22px 16px 80px;
-    display:grid; grid-template-columns:1fr; gap:22px;
-  }
-  @media(min-width:900px){ main{grid-template-columns:380px 1fr; align-items:start;} }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>HACKER HOUSE GOA 2026 · Builder ID Card</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌴</text></svg>">
+  <meta property="og:title" content="HACKER HOUSE GOA 2026 · Builder ID Card">
+  <meta property="og:description" content="Upload a photo, get your HH Goa 2026 builder pass, and post it with #FrameInGoa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&family=Victor+Mono:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
   
-  .panel{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px; box-shadow:0 12px 30px rgba(0,0,0,0.4);}
-  .tabs{display:flex; gap:8px; margin-bottom:20px;}
-  .tab{
-    flex:1; text-align:center; padding:12px 8px; border-radius:6px;
-    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; text-transform:uppercase;
-    cursor:pointer; border:1px solid var(--line); color:rgba(255,239,214,.55); transition:.15s;
-  }
-  .tab.active{background:var(--sand); color:#000; border-color:transparent;}
-  
-  label{display:block; font-size:12px; font-weight:600; color:rgba(255,239,214,.8); margin:18px 0 8px;}
-  label:first-of-type{margin-top:0;}
-  .dropzone{
-    border:2px dashed rgba(255,239,214,0.2); border-radius:8px; padding:24px 14px;
-    text-align:center; cursor:pointer; transition:.15s;
-  }
-  .dropzone:hover, .dropzone.drag{border-color:var(--magenta); background:rgba(255,62,122,0.06);}
-  .dropzone svg{width:28px;height:28px;opacity:.6; margin-bottom:10px; color:var(--magenta);}
-  .dropzone .dz-text{font-size:14px; font-weight:500;}
-  .dropzone .dz-sub{font-size:12px; color:rgba(255,239,214,.4); margin-top:4px;}
-  .dropzone input{display:none;}
-  .thumb-wrap{display:flex; align-items:center; gap:12px; margin-top:12px;}
-  .thumb-wrap img{width:48px;height:48px;border-radius:6px;object-fit:cover; border:1px solid var(--line);}
-  .thumb-wrap span{font-size:13px; color:rgba(255,239,214,.6); word-break:break-all;}
-  .zoomrow{display:flex; align-items:center; gap:10px; margin-top:12px;}
-  .zoomrow input[type=range]{flex:1; accent-color:var(--magenta);}
-  .zoomrow .zlabel{font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:rgba(255,239,214,.5);}
-  
-  input[type=text]{
-    width:100%; padding:14px 14px; border-radius:6px; border:1px solid var(--line);
-    background:var(--night); color:var(--sand); font-family:'Inter',sans-serif; font-size:16px; outline:none;
-    -webkit-appearance: none;
-  }
-  input[type=text]:focus{border-color:var(--magenta);}
-  
-  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-  @media(max-width: 480px){ .row2{grid-template-columns:1fr;} }
-  
-  .title-pill{
-    margin-top:18px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    background:rgba(255,239,214,.04); border:1px solid var(--line); border-radius:8px; padding:14px;
-  }
-  .title-pill .lbl{font-size:11px; text-transform:uppercase; font-weight:600; color:rgba(255,239,214,.4); width:100%;}
-  .title-pill strong{font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--lime);}
-  .reroll{
-    margin-left:auto; background:none; border:1px solid var(--line); color:var(--sand);
-    border-radius:6px; width:32px; height:32px; cursor:pointer; font-size:14px;
-  }
-  .reroll:hover{background:rgba(255,255,255,.05);}
-  
-  .actions{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;}
-  button.primary, button.secondary{
-    flex:1; padding:16px 12px; border-radius:8px; border:none; cursor:pointer;
-    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; text-transform:uppercase;
-    min-width: 140px;
-  }
-  button.primary{background:var(--sand); color:#000;}
-  button.secondary{background:transparent; color:var(--sand); border:1px solid var(--line);}
-  button.primary:disabled{opacity:.4; cursor:not-allowed;}
-  
-  .preview-panel{display:flex; flex-direction:column; align-items:center; gap:18px; padding:30px 16px;}
-  .canvas-wrap{position:relative; width:100%; max-width:420px; filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));}
-  canvas{width:100%; height:auto; display:block; border-radius:8px; cursor:grab; touch-action:none; position:relative; z-index:1;}
-  canvas:active{cursor:grabbing;}
-  .hint{font-size:13px; color:rgba(255,239,214,.4); text-align:center; max-width:320px;}
-  
-  /* Animation Layer */
-  .anim-layer {
-    position: absolute;
-    inset: -80px;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-    border-radius: 20px;
-  }
-  .floating-item {
-    position: absolute;
-    opacity: 0;
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
-  }
-  @keyframes floatLR {
-    0% { left: -20%; opacity: 0; transform: translateY(0px) rotate(-5deg); }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { left: 120%; opacity: 0; transform: translateY(-20px) rotate(5deg); }
-  }
-  @keyframes floatRL {
-    0% { left: 120%; opacity: 0; transform: translateY(0px) rotate(5deg) scaleX(-1); }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { left: -20%; opacity: 0; transform: translateY(-20px) rotate(-5deg) scaleX(-1); }
-  }
-  @keyframes bob {
-    0%, 100% { margin-top: 0; }
-    50% { margin-top: -15px; }
-  }
-  
-  /* Realistic Waves */
-  .ocean {
-    position: absolute; bottom: 0; left: 0; width: 100%; height: 140px;
-    overflow: hidden; border-radius: 0 0 20px 20px;
-  }
-  .wave-layer {
-    position: absolute; bottom: 0; left: 0; width: 200%; height: 100%;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.5-200 0-250 49.5-394.5 49.5v31.8h800v-31.8z' fill='%2312C7AC'/%3E%3C/svg%3E") repeat-x;
-    background-size: 50% 100%;
-    animation: waveAnim 8s linear infinite;
-  }
-  .wave-layer.w2 {
-    animation-duration: 12s;
-    animation-direction: reverse;
-    opacity: 0.6; background-size: 50% 110%; bottom: -10px;
-  }
-  .wave-layer.w3 {
-    animation-duration: 18s;
-    opacity: 0.3; background-size: 50% 120%; bottom: -20px;
-  }
-  @keyframes waveAnim {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+  <style>
+    :root {
+      --bg-dark: #02140c;
+      --text-light: #fffbe8;
+      --hh-yellow: 254, 225, 1;
+      --hh-green: #1a5c3a;
+      --font-mono: 'Space Mono', 'Victor Mono', monospace;
+      --font-sans: 'Inter', sans-serif;
+    }
+    
+    * { box-sizing: border-box; }
+    
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-  footer{
-    position:relative; z-index:1; text-align:center; padding:26px 16px 42px;
-    font-size:12px; color:rgba(255,239,214,.3); font-weight:500;
-  }
-  .tag{display:inline-block; background:rgba(255,62,122,.1); color:var(--magenta); padding:3px 10px; border-radius:20px;}
-</style>
+    .layout-grid {
+      display: grid;
+      min-height: 100vh;
+      grid-template-rows: auto 1fr;
+    }
+
+    @media (min-width: 1024px) {
+      .layout-grid {
+        grid-template-columns: minmax(360px, 440px) 1fr;
+        grid-template-rows: 1fr;
+      }
+    }
+
+    /* PREVIEW SECTION */
+    .preview-section {
+      order: 1;
+      position: relative;
+      height: 62vh;
+      min-height: 300px;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 62%, #1a5c3a 0%, #0a3a22 30%, #051a0e 65%, #01100a 100%);
+      border-left: 1px solid rgba(var(--hh-yellow), 0.1);
+      border-bottom: 1px solid rgba(var(--hh-yellow), 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (min-width: 1024px) {
+      .preview-section {
+        order: 2;
+        height: 100vh;
+        border-bottom: none;
+      }
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(var(--hh-yellow), 0.025) 1px, transparent 1px), 
+                        linear-gradient(90deg, rgba(var(--hh-yellow), 0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    .corner-bracket {
+      position: absolute;
+      color: rgba(var(--hh-yellow), 0.25);
+    }
+    .c-tl { top: 12px; left: 12px; }
+    .c-tr { top: 12px; right: 12px; }
+    .c-bl { bottom: 12px; left: 12px; }
+    .c-br { bottom: 12px; right: 12px; }
+
+    .bg-logo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      user-select: none;
+    }
+    .bg-logo img {
+      width: 70%;
+      max-width: 320px;
+      opacity: 0.06;
+      filter: blur(1px);
+    }
+
+    .freq-text {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.55em;
+      color: rgba(var(--hh-yellow), 0.15);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .preview-controls {
+      position: absolute;
+      inset: 0;
+      top: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 12px;
+      pointer-events: none;
+    }
+    @media (min-width: 640px) {
+      .preview-controls { padding: 16px; }
+    }
+
+    .pill-label {
+      display: flex;
+      height: 36px;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
+    }
+    @media (min-width: 1024px) {
+      .pill-label { height: 44px; padding: 0 16px; font-size: 11px; }
+    }
+
+    .pill-btn-group {
+      display: flex;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .pill-btn {
+      display: flex;
+      height: 36px;
+      cursor: pointer;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      transition: 0.2s;
+    }
+    .pill-btn:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    .pill-btn:active {
+      transform: scale(0.95);
+    }
+    @media (min-width: 1024px) {
+      .pill-btn { height: 44px; padding: 0 16px; font-size: 11px; }
+    }
+
+    .help-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      z-index: 10;
+      display: flex;
+      height: 36px;
+      width: 36px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.55);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(4px);
+      transition: 0.2s;
+    }
+    .help-btn:hover {
+      border-color: rgba(var(--hh-yellow), 0.4);
+      color: rgb(var(--hh-yellow));
+    }
+    .help-btn:active {
+      transform: scale(0.95);
+    }
+    @media (min-width: 640px) {
+      .help-btn { bottom: 16px; right: 16px; }
+    }
+    @media (min-width: 1024px) {
+      .help-btn { height: 44px; width: 44px; font-size: 17px; }
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    canvas {
+      max-width: 85%;
+      max-height: 85%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      cursor: grab;
+      filter: drop-shadow(0 24px 40px rgba(0,0,0,0.6));
+      border-radius: 8px;
+    }
+    canvas:active { cursor: grabbing; }
+
+    /* FORM SECTION */
+    .form-section {
+      order: 2;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark);
+      overflow-y: auto;
+    }
+    @media (min-width: 1024px) {
+      .form-section {
+        order: 1;
+        height: 100vh;
+      }
+    }
+
+    .header-mobile {
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(var(--hh-yellow), 0.1);
+      padding: 10px 16px;
+    }
+    @media (min-width: 1024px) {
+      .header-mobile { display: none; }
+    }
+    .hm-flex {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hm-logo {
+      height: 32px;
+      width: auto;
+      flex: none;
+      filter: drop-shadow(0 0 10px rgba(var(--hh-yellow), 0.18));
+    }
+    .hm-info { min-width: 0; flex: 1; }
+    .hm-sub {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: rgba(var(--hh-yellow), 0.5);
+    }
+    .hm-badge {
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hm-badge .line { height: 1px; width: 12px; background: rgba(var(--hh-yellow), 0.4); }
+    .hm-badge span {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      color: rgba(var(--hh-yellow), 0.3);
+    }
+
+    .header-desktop {
+      display: none;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(var(--hh-yellow), 0.1);
+      padding: 20px 20px 20px;
+    }
+    @media (min-width: 640px) { .header-desktop { padding: 20px 28px 20px; } }
+    @media (min-width: 1024px) { .header-desktop { display: block; } }
+
+    .hd-top {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hd-top span {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: rgba(var(--hh-yellow), 0.5);
+    }
+    .hd-top span:first-child { letter-spacing: 0.4em; }
+    .hd-top span:last-child { letter-spacing: 0.22em; }
+    
+    .hd-logo {
+      width: 100%;
+      max-width: 280px;
+      filter: drop-shadow(0 0 20px rgba(var(--hh-yellow), 0.15));
+    }
+    @media (min-width: 640px) { .hd-logo { max-width: 320px; } }
+
+    .hd-divider {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hd-divider .line-solid { height: 1px; width: 24px; flex: none; background: rgb(var(--hh-yellow)); }
+    .hd-divider span {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.45em;
+      color: rgba(var(--hh-yellow), 0.4);
+      white-space: nowrap;
+    }
+    .hd-divider .line-faded { height: 1px; flex: 1; background: rgba(var(--hh-yellow), 0.15); }
+    
+    .hd-desc {
+      margin-top: 12px;
+      font-size: 11px;
+      line-height: 1.6;
+      color: rgba(255, 251, 232, 0.38);
+    }
+    .hd-desc span {
+      font-weight: 500;
+      color: rgba(var(--hh-yellow), 0.7);
+    }
+
+    /* Form Content */
+    .form-body {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    @media (min-width: 640px) { .form-body { padding: 20px; gap: 16px; } }
+    @media (min-width: 1024px) { .form-body { padding: 20px 28px; gap: 20px; } }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 0px; }
+    .tab {
+      flex: 1; text-align: center; padding: 10px 8px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase;
+      cursor: pointer; border: 1px solid rgba(var(--hh-yellow), 0.12);
+      color: rgba(var(--hh-yellow), 0.5); transition: 0.2s; background: rgba(var(--hh-yellow), 0.025);
+    }
+    .tab.active { background: rgba(var(--hh-yellow), 0.1); color: rgb(var(--hh-yellow)); border-color: rgba(var(--hh-yellow), 0.4); }
+    .tab:hover:not(.active) { background: rgba(var(--hh-yellow), 0.05); color: rgba(var(--hh-yellow), 0.7); border-color: rgba(var(--hh-yellow), 0.2); }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: rgba(var(--hh-yellow), 0.55);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .upload-btn {
+      position: relative;
+      width: 100%;
+      cursor: pointer;
+      text-align: center;
+      padding: 36px 24px;
+      background: transparent;
+      border: none;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .upload-btn:hover {
+      background: rgba(var(--hh-yellow), 0.03);
+    }
+    
+    .upload-corner {
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      border-color: rgba(var(--hh-yellow), 0.25);
+      border-style: solid;
+      border-width: 0;
+      transition: border-color 0.2s;
+    }
+    .upload-btn:hover .upload-corner { border-color: rgba(var(--hh-yellow), 0.5); }
+    .uc-tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+    .uc-tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+    .uc-bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+    .uc-br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+    .upload-icon {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+    }
+    .upload-icon svg {
+      height: 28px;
+      width: 28px;
+      color: rgba(var(--hh-yellow), 0.3);
+      transition: color 0.2s;
+    }
+    .upload-btn:hover .upload-icon svg { color: rgba(var(--hh-yellow), 0.6); }
+
+    .upload-title {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(255, 251, 232, 0.7);
+      transition: color 0.2s;
+    }
+    .upload-btn:hover .upload-title { color: rgba(255, 251, 232, 0.9); }
+
+    .upload-sub {
+      display: block;
+      margin-top: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255, 251, 232, 0.3);
+    }
+    input[type=file] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .thumb-wrap { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+    .thumb-wrap img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(var(--hh-yellow), 0.2); }
+    .thumb-wrap span { font-family: var(--font-mono); font-size: 11px; color: rgba(255, 251, 232, 0.5); word-break: break-all; }
+    
+    .zoomrow { display: flex; align-items: center; gap: 10px; margin-top: 8px; width: 100%; }
+    .zoomrow input[type=range] { flex: 1; accent-color: rgb(var(--hh-yellow)); }
+    .zoomrow .zlabel { font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: rgba(var(--hh-yellow), 0.5); }
+
+    .form-separator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .form-separator .line { flex: 1; height: 1px; background: rgba(var(--hh-yellow), 0.1); }
+    .form-separator .dot { height: 4px; width: 4px; border-radius: 9999px; background: rgba(var(--hh-yellow), 0.2); }
+
+    .input-field {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(var(--hh-yellow), 0.12);
+      background: rgba(var(--hh-yellow), 0.025);
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--text-light);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field::placeholder { color: rgba(255, 251, 232, 0.2); }
+    .input-field:focus {
+      border-color: rgba(var(--hh-yellow), 0.45);
+      background: rgba(var(--hh-yellow), 0.05);
+    }
+
+    .reroll-btn {
+      display: flex;
+      cursor: pointer;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(var(--hh-yellow), 0.5);
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .reroll-btn:hover { color: rgb(var(--hh-yellow)); }
+    .reroll-btn svg {
+      height: 12px;
+      width: 12px;
+      transition: transform 0.5s;
+    }
+    .reroll-btn:hover svg { transform: rotate(270deg); }
+
+    .field-desc {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      line-height: 1.6;
+      color: rgba(255, 251, 232, 0.25);
+    }
+
+    /* FOOTER / ACTIONS */
+    .form-footer {
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      background: rgba(2, 20, 12, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 0 16px 16px;
+    }
+    @media (min-width: 640px) { .form-footer { padding: 0 20px 16px; } }
+    @media (min-width: 1024px) {
+      .form-footer {
+        position: relative;
+        background: transparent;
+        backdrop-filter: none;
+        padding: 0 28px 16px;
+      }
+    }
+
+    .ff-inner {
+      border-top: 1px solid rgba(var(--hh-yellow), 0.1);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .btn svg {
+      height: 14px;
+      width: 14px;
+      flex-shrink: 0;
+    }
+
+    .btn-outline {
+      border: 1px solid rgba(var(--hh-yellow), 0.2);
+      background: transparent;
+      font-weight: 500;
+      color: rgba(255, 251, 232, 0.75);
+    }
+    .btn-outline:not(:disabled):hover {
+      border-color: rgba(var(--hh-yellow), 0.5);
+      color: var(--text-light);
+    }
+    .btn-outline::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(var(--hh-yellow), 0.05);
+      transform: translateY(100%);
+      transition: transform 0.2s;
+    }
+    .btn-outline:not(:disabled):hover::before { transform: translateY(0); }
+    .btn-outline span { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
+
+    .btn-solid {
+      background: rgb(var(--hh-yellow));
+      color: #02140c;
+      font-weight: 600;
+    }
+    .btn-solid:not(:disabled):hover { filter: brightness(1.1); }
+    .btn-solid:not(:disabled):active { transform: scale(0.98); }
+
+    .ff-desc {
+      display: none;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      line-height: 1.6;
+      color: rgba(255, 251, 232, 0.22);
+    }
+    @media (min-width: 1024px) { .ff-desc { display: block; } }
+    .ff-desc span { color: rgba(var(--hh-yellow), 0.4); }
+
+    .site-footer {
+      display: none;
+      flex-shrink: 0;
+      border-top: 1px solid rgba(var(--hh-yellow), 0.07);
+      padding: 12px 28px;
+    }
+    @media (min-width: 1024px) {
+      .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .site-footer p { font-family: var(--font-mono); font-size: 9px; color: rgba(255, 251, 232, 0.18); margin: 0; }
+    .site-footer span { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.35em; color: rgba(var(--hh-yellow), 0.2); }
+
+  </style>
 </head>
 <body>
-<div class="grain"></div>
 
-<header>
-  <span class="eyebrow">28–31 Oct 2026</span>
-  <h1>Hacker <span>Goa</span></h1>
-  <p>Generate your official profile frame or ID card for HH Goa 2026. No login required, everything runs locally.</p>
-</header>
+<div class="layout-grid">
+  
+  <!-- PREVIEW SECTION -->
+  <section class="preview-section">
+    <div class="grid-overlay"></div>
+    
+    <svg aria-hidden="true" class="corner-bracket c-tl" viewBox="0 0 14 14" fill="none"><path d="M0 10V0H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"></path></svg>
+    <svg aria-hidden="true" class="corner-bracket c-tr" viewBox="0 0 14 14" fill="none"><path d="M14 10V0H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"></path></svg>
+    <svg aria-hidden="true" class="corner-bracket c-bl" viewBox="0 0 14 14" fill="none"><path d="M0 4V14H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"></path></svg>
+    <svg aria-hidden="true" class="corner-bracket c-br" viewBox="0 0 14 14" fill="none"><path d="M14 4V14H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"></path></svg>
 
-<main>
-  <section class="panel">
-    <div class="tabs">
-      <div class="tab active" id="tabFrame" data-format="frame">🖼 Profile Frame</div>
-      <div class="tab" id="tabCard" data-format="card">🎫 Builder ID</div>
-    </div>
-
-    <label>Your photo</label>
-    <div class="dropzone" id="dropzone">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-      <div class="dz-text">Tap to upload or drag photo</div>
-      <div class="dz-sub">JPG, PNG, or HEIC format</div>
-      <input type="file" id="fileInput" accept="image/*,.heic,.heif">
+    <div class="bg-logo">
+      <img src="https://id-card-generator-eta-jet.vercel.app/brand/hhg-vector.png" alt="" aria-hidden="true"/>
     </div>
     
-    <div class="thumb-wrap" id="thumbWrap" style="display:none;">
-      <img id="thumbImg" alt="">
-      <span id="thumbName"></span>
-    </div>
-    <div class="zoomrow" id="zoomrow" style="display:none;">
-      <span class="zlabel">ZOOM</span>
-      <input type="range" id="zoomSlider" min="50" max="300" value="100">
-      <span class="zlabel" id="zoomVal">100%</span>
-    </div>
+    <div class="freq-text">2.47 MHz</div>
 
-    <div id="cardFields" style="display:none;">
-      <label>Display Name</label>
-      <input type="text" id="fName" placeholder="e.g. Madhavan Singh" maxlength="24">
-      <div class="row2">
-        <div>
-          <label>Role</label>
-          <input type="text" id="fRole" placeholder="e.g. Full Stack" maxlength="20">
-        </div>
-        <div>
-          <label>Location</label>
-          <input type="text" id="fFrom" placeholder="e.g. Bangalore" maxlength="18">
-        </div>
-      </div>
-      <div class="title-pill">
-        <span class="lbl">Builder Class</span>
-        <strong id="builderTitle">Terminal Wizard</strong>
-        <button class="reroll" id="reroll" title="Reroll class">⟳</button>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="primary" id="downloadBtn" disabled>Download</button>
-      <button class="secondary" id="shareBtn" disabled>Share</button>
-    </div>
-  </section>
-
-  <section class="panel preview-panel">
     <div class="canvas-wrap">
       <canvas id="outCanvas"></canvas>
-      <div id="animLayer" class="anim-layer"></div>
     </div>
-    <div class="hint" id="hintText">Upload a photo to see the preview. Drag to re-center, scroll to zoom.</div>
-  </section>
-</main>
 
-<footer>
-  <span class="tag">#FrameInGoa</span> &nbsp; processed locally in your browser
-</footer>
+    <div class="preview-controls">
+      <p class="pill-label">Drag ↔ to spin</p>
+      <div class="pill-btn-group">
+        <button type="button" class="pill-btn" onclick="document.getElementById('tabFrame').click()">Frame</button>
+        <button type="button" class="pill-btn" onclick="document.getElementById('tabCard').click()">Card</button>
+      </div>
+    </div>
+
+    <button type="button" aria-label="How to handle the badge" class="help-btn" id="helpBtn">?</button>
+  </section>
+
+  <!-- FORM SECTION -->
+  <section class="form-section">
+    
+    <!-- Mobile Header -->
+    <header class="header-mobile">
+      <div class="hm-flex">
+        <img src="https://id-card-generator-eta-jet.vercel.app/brand/hhg-vector.png" alt="HACKER HOUSE GOA" class="hm-logo"/>
+        <div class="hm-info">
+          <p class="hm-sub">GOA, INDIA · 28–31 OCT 2026</p>
+          <div class="hm-badge">
+            <div class="line"></div>
+            <span>Builder ID</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Desktop Header -->
+    <header class="header-desktop">
+      <div class="hd-top">
+        <span>GOA, INDIA</span>
+        <span>28–31 OCT 2026</span>
+      </div>
+      <img src="https://id-card-generator-eta-jet.vercel.app/brand/hhg-vector.png" alt="HACKER HOUSE GOA" class="hd-logo"/>
+      <div class="hd-divider">
+        <div class="line-solid"></div>
+        <span>Builder ID</span>
+        <div class="line-faded"></div>
+      </div>
+      <p class="hd-desc">Upload a photo, fill three fields, download the badge and post it with <span>#FrameInGoa</span>.</p>
+    </header>
+
+    <div class="form-body">
+      
+      <!-- Hidden Tabs logically -->
+      <div class="tabs" style="display:none;">
+        <div class="tab active" id="tabFrame" data-format="frame">🖼 Frame</div>
+        <div class="tab" id="tabCard" data-format="card">🎫 ID Card</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Photo</label>
+        <button type="button" class="upload-btn" id="dropzone">
+          <span class="upload-corner uc-tl"></span>
+          <span class="upload-corner uc-tr"></span>
+          <span class="upload-corner uc-bl"></span>
+          <span class="upload-corner uc-br"></span>
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <span class="upload-title">Upload a photo</span>
+          <span class="upload-sub">JPG · PNG · HEIC · drag & drop or tap</span>
+        </button>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif">
+        
+        <div class="thumb-wrap" id="thumbWrap" style="display:none;">
+          <img id="thumbImg" alt="">
+          <span id="thumbName"></span>
+        </div>
+        <div class="zoomrow" id="zoomrow" style="display:none;">
+          <span class="zlabel">ZOOM</span>
+          <input type="range" id="zoomSlider" min="50" max="300" value="100">
+          <span class="zlabel" id="zoomVal">100%</span>
+        </div>
+      </div>
+
+      <div class="form-separator">
+        <div class="line"></div>
+        <div class="dot"></div>
+        <div class="line"></div>
+      </div>
+
+      <div id="cardFields" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" id="fName" class="input-field" placeholder="Ada Lovelace" maxlength="28" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Stack / Role</label>
+          <input type="text" id="fRole" class="input-field" placeholder="Full-stack · Rust · design" maxlength="34">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Builder Title
+            <button type="button" class="reroll-btn" id="reroll">
+              <svg viewBox="0 0 12 12" fill="none">
+                <path d="M10.5 3C9.5 1.2 7.8 0 5.8 0 2.6 0 0 2.7 0 6s2.6 6 5.8 6c2.4 0 4.4-1.5 5.3-3.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
+                <path d="M8.5 2L10.5 3 11.5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              Reroll
+            </button>
+          </label>
+          <input type="text" id="builderTitle" class="input-field" maxlength="38" value="Nocturnal Hot-Reload Cowboy">
+          <p class="field-desc">Auto-generated from name + stack — reroll or edit freely.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">X Handle (optional)</label>
+          <input type="text" id="fFrom" class="input-field" placeholder="yourhandle" maxlength="20">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <div class="ff-inner">
+        <div class="btn-grid">
+          <button type="button" class="btn btn-outline" id="downloadBtn" disabled>
+            <span>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 1v9M4 7l3 3 3-3M1 12h12"></path>
+              </svg>
+              Download
+            </span>
+          </button>
+          <button type="button" class="btn btn-solid" id="shareBtn" disabled>
+            <span>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.636 5.903-5.636Zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+              </svg>
+              Share to X
+            </span>
+          </button>
+        </div>
+        <p class="ff-desc">Download saves both front & back as separate PNGs.</p>
+        <p class="ff-desc">On mobile the image is attached directly. On desktop, the badge is copied — paste it in the X composer. Caption includes <span>#FrameInGoa</span>.</p>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>HH Goa 2026 · Format B · Shortlisting task</p>
+      <span>2.47</span>
+    </footer>
+
+  </section>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -251,9 +829,8 @@
 (function(){
   "use strict";
   
-  let format = 'frame';
+  let format = 'card';
   let userImg = null;
-  let currentTitle = '';
   let imgPanX = 0, imgPanY = 0, imgScale = 1;
 
   const C = {
@@ -282,7 +859,6 @@
   const shareBtn = document.getElementById('shareBtn');
   const canvas = document.getElementById('outCanvas');
   const ctx = canvas.getContext('2d');
-  const hintText = document.getElementById('hintText');
   const tabFrame = document.getElementById('tabFrame');
   const tabCard = document.getElementById('tabCard');
 
@@ -293,7 +869,7 @@
       return;
     }
     if (format === 'card') {
-      if (!fName.value.trim() || !fRole.value.trim() || !fFrom.value.trim()) {
+      if (!fName.value.trim() || !fRole.value.trim()) {
         downloadBtn.disabled = true;
         shareBtn.disabled = true;
         return;
@@ -305,9 +881,8 @@
 
   function setFormat(f){
     format = f;
-    tabFrame.classList.toggle('active', f==='frame');
-    tabCard.classList.toggle('active', f==='card');
-    cardFields.style.display = f==='card' ? 'block' : 'none';
+    // We visually hide the tabs, but keep state
+    cardFields.style.display = f==='card' ? 'flex' : 'none';
     render();
     checkDownloadState();
   }
@@ -315,10 +890,9 @@
   tabCard.addEventListener('click', ()=>setFormat('card'));
 
   dropzone.addEventListener('click', ()=>fileInput.click());
-  dropzone.addEventListener('dragover', e=>{e.preventDefault(); dropzone.classList.add('drag');});
-  dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
+  dropzone.addEventListener('dragover', e=>{e.preventDefault();});
   dropzone.addEventListener('drop', e=>{
-    e.preventDefault(); dropzone.classList.remove('drag');
+    e.preventDefault();
     if(e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
   });
   fileInput.addEventListener('change', e=>{
@@ -326,7 +900,6 @@
   });
 
   async function handleFile(file){
-    hintText.textContent = 'Processing photo...';
     let blob = file;
     if(/heic|heif/i.test(file.type) || /\.hei[cf]$/i.test(file.name)){
       try{
@@ -343,88 +916,25 @@
       zoomrow.style.display = 'flex';
       thumbImg.src = url;
       thumbName.textContent = file.name;
-      hintText.textContent = 'Drag to reposition, scroll to zoom.';
       render();
-      spawnAnimations();
       checkDownloadState();
     };
-    img.onerror = ()=>hintText.textContent = "Error loading image.";
     img.src = url;
   }
   
-  function spawnAnimations() {
-    const layer = document.getElementById('animLayer');
-    layer.innerHTML = `
-      <div class="ocean">
-        <div class="wave-layer w3"></div>
-        <div class="wave-layer w2"></div>
-        <div class="wave-layer"></div>
-      </div>
-    `;
-    
-    let tLeft = false; // ensure one tree left, one right
-    const spawn = (emoji, type) => {
-      const el = document.createElement('div');
-      el.className = 'floating-item';
-      el.textContent = emoji;
-      
-      if (type === 'tree') {
-        el.style.bottom = `${50 + Math.random() * 40}px`; 
-        el.style[tLeft ? 'right' : 'left'] = `${10 + Math.random() * 40}px`;
-        el.style.fontSize = `${65 + Math.random() * 20}px`;
-        el.style.animation = `bob ${3 + Math.random()*2}s ease-in-out infinite`;
-        el.style.opacity = '1';
-        el.style.transform = tLeft ? 'rotate(10deg)' : 'rotate(-10deg)';
-        tLeft = !tLeft;
-      } else {
-        const isLR = Math.random() > 0.5;
-        let dur = 15, top = '50%', fontSize = 30;
-        
-        if (type === 'cloud') {
-          dur = 60 + Math.random() * 40; // very slow
-          top = `${5 + Math.random() * 25}%`;
-          fontSize = 40 + Math.random() * 30;
-        } else if (type === 'bird') {
-          dur = 12 + Math.random() * 10; // fast
-          top = `${10 + Math.random() * 35}%`;
-          fontSize = 20 + Math.random() * 10;
-        } else if (type === 'boat') {
-          dur = 20 + Math.random() * 15; // medium
-          el.style.bottom = `${90 + Math.random() * 40}px`; // near water
-          el.style.top = 'auto';
-          fontSize = 30 + Math.random() * 15;
-        }
-        
-        if (type !== 'boat') el.style.top = top;
-        el.style.fontSize = `${fontSize}px`;
-        const del = Math.random() * 30;
-        const bobDur = 2 + Math.random() * 3;
-        el.style.animation = `${isLR ? 'floatLR' : 'floatRL'} ${dur}s linear -${del}s infinite, bob ${bobDur}s ease-in-out infinite`;
-      }
-      layer.appendChild(el);
-    };
-
-    spawn('🌴', 'tree'); spawn('🌴', 'tree');
-    for(let i=0; i<5; i++) spawn('☁️', 'cloud');
-    for(let i=0; i<3; i++) spawn(['🦅','🕊️','🦜'][Math.floor(Math.random()*3)], 'bird');
-    for(let i=0; i<4; i++) spawn(['⛵','🚤','🐟'][Math.floor(Math.random()*3)], 'boat');
-  }
-
   zoomSlider.addEventListener('input', ()=>{
     imgScale = zoomSlider.value / 100;
     zoomVal.textContent = zoomSlider.value + '%';
     render();
   });
 
-  const TITLE_POOL = ["TERMINAL WIZARD", "SUNSET SHIPPER", "BEACH HACKER", "VIBE CODER", "FULL-STACK PIRATE", "DEPLOYMENT MONK"];
+  const TITLE_POOL = ["TERMINAL WIZARD", "SUNSET SHIPPER", "BEACH HACKER", "VIBE CODER", "FULL-STACK PIRATE", "DEPLOYMENT MONK", "NOCTURNAL HOT-RELOAD COWBOY"];
   function rerollTitle(){
-    currentTitle = TITLE_POOL[Math.floor(Math.random()*TITLE_POOL.length)];
-    builderTitleEl.textContent = currentTitle;
+    builderTitleEl.value = TITLE_POOL[Math.floor(Math.random()*TITLE_POOL.length)];
     render();
   }
   rerollBtn.addEventListener('click', rerollTitle);
-  [fRole, fName, fFrom].forEach(el => el.addEventListener('input', () => { render(); checkDownloadState(); }));
-  rerollTitle();
+  [fRole, fName, fFrom, builderTitleEl].forEach(el => el.addEventListener('input', () => { render(); checkDownloadState(); }));
 
   function drawCover(ctx, img, x, y, w, h){
     const ir = img.width / img.height;
@@ -694,6 +1204,7 @@
     const cx1 = W/6;
     ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BUILDER CLASS ✦', cx1, fy+30);
     ctx.fillStyle = C.red; ctx.font = '800 24px "Space Mono"';
+    const currentTitle = builderTitleEl.value || '';
     const classLines = currentTitle.split(' ');
     ctx.fillText(classLines[0]||'', cx1, fy+60); ctx.fillText(classLines[1]||'', cx1, fy+85);
     ctx.fillStyle = C.green; roundedRect(ctx, cx1-50, fy+105, 100, 100, 8); ctx.fill();
@@ -717,10 +1228,18 @@
       ctx.drawImage(qrCanvas, cx1-45, fy+110, 90, 90);
     }
 
-    // Col 2: Beach Bag
+    // Col 2: Beach Bag / Handle
     const cx2 = W/2;
     ctx.fillStyle = C.ink; ctx.font = '700 16px "Space Mono"'; ctx.fillText('✦ BEACH BAG ✦', cx2, fy+30);
-    const items = [['🥥','COCONUT'],['💻','VS CODE'],['🎧','LO-FI BEATS']];
+    
+    let items = [['🥥','COCONUT'],['💻','VS CODE'],['🎧','LO-FI BEATS']];
+    // If X Handle exists, substitute the last item
+    if (fFrom.value.trim()) {
+      let handle = fFrom.value.trim();
+      if(!handle.startsWith('@')) handle = '@' + handle;
+      items[2] = ['✖', handle.toUpperCase()];
+    }
+
     items.forEach((it, i) => {
       ctx.textAlign = 'left'; ctx.font = '28px Arial'; ctx.fillText(it[0], cx2-65, fy+75 + i*35);
       ctx.fillStyle = C.green; ctx.font = '700 16px "Space Mono"'; ctx.fillText(it[1], cx2-20, fy+70 + i*35);
@@ -760,13 +1279,12 @@
     canvas.toBlob(async (blob)=>{
       const file = new File([blob], fileNameFor(), {type:'image/png'});
       const text = format==='frame' ? 'Generated my #HHGoa2026 Seal! 🌴 #FrameInGoa'
-        : `Ready to build in Goa as a ${currentTitle}! 🌴 #HHGoa2026 #FrameInGoa`;
+        : `Ready to build in Goa as a ${builderTitleEl.value}! 🌴 #HHGoa2026 #FrameInGoa`;
       if(navigator.canShare && navigator.canShare({files:[file]})){
         try{ await navigator.share({files:[file], text}); return; }catch(e){}
       }
       const a = document.createElement('a'); a.download = fileNameFor(); a.href = URL.createObjectURL(blob); a.click();
       window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
-      hintText.textContent = 'Image downloaded! Attach it in the X composer.';
     }, 'image/png');
   });
 
