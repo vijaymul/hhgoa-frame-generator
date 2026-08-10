@@ -204,15 +204,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.strokeStyle = "#f1c40f";
                 ctx.stroke();
 
-                // Draw Name
-                const nameY = height * 0.65;
-                ctx.textBaseline = "middle";
-                ctx.textAlign = "center";
-                
                 ctx.font = "bold " + (width * 0.045) + "px 'Inter', sans-serif";
                 const nameMetrics = ctx.measureText(name);
                 const boxWidth = Math.max(nameMetrics.width + 100, width * 0.5);
                 const boxHeight = width * 0.08;
+                
+                // Draw Name (Overlapping the circle slightly)
+                const nameY = centerY + radius + (boxHeight / 4);
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
                 
                 // Name Box
                 ctx.fillStyle = "#0d2818";
