@@ -224,8 +224,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.fillStyle = "#ffffff";
                 ctx.fillText(name, width / 2, nameY);
 
+                // ---------------------------------------------------
+                // Dynamic Data Panel (Hides baked-in template text)
+                // ---------------------------------------------------
+                const dataBoxTop = nameY + boxHeight/2;
+                const dataBoxHeight = xHandle ? (width * 0.15) : (width * 0.12);
+                
+                ctx.fillStyle = "#0d2818";
+                ctx.fillRect(width * 0.1, dataBoxTop, width * 0.8, dataBoxHeight);
+                
+                ctx.strokeStyle = "#164a2c";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(width * 0.1, dataBoxTop, width * 0.8, dataBoxHeight);
+
                 // Draw Role
-                const roleY = nameY + boxHeight/2 + (width * 0.05);
+                const roleY = dataBoxTop + (width * 0.04);
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold " + (width * 0.03) + "px 'Inter', sans-serif";
                 ctx.fillText("⚡ " + role + " ⚡", width / 2, roleY);
@@ -244,22 +257,41 @@ document.addEventListener("DOMContentLoaded", () => {
                     ctx.fillText(handleText, width / 2, titleY + (width * 0.035));
                 }
 
+                // ---------------------------------------------------
+                // Footer Panel (Hides baked-in template footer)
+                // ---------------------------------------------------
+                const footerTop = height * 0.84;
+                const footerHeight = height - footerTop;
+                
+                ctx.fillStyle = "#0c1410";
+                ctx.fillRect(0, footerTop, width, footerHeight);
+                
+                ctx.strokeStyle = "#ff0066";
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(0, footerTop);
+                ctx.lineTo(width, footerTop);
+                ctx.stroke();
+
                 // Reset text baseline for footer
                 ctx.textBaseline = "alphabetic";
 
                 // Draw Footer Details
+                const footerTextY1 = footerTop + (footerHeight * 0.4);
+                const footerTextY2 = footerTop + (footerHeight * 0.7);
+
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "bold " + (width * 0.025) + "px 'Inter', sans-serif";
                 ctx.textAlign = "left";
-                ctx.fillText("BUILDER ID", width * 0.25, height * 0.88);
-                ctx.fillStyle = "#ff0066";
-                ctx.fillText("#HH-GOA-2026", width * 0.25, height * 0.92);
+                ctx.fillText("BUILDER ID", width * 0.1, footerTextY1);
+                ctx.fillStyle = "#f1c40f";
+                ctx.fillText("#HH-GOA-" + Math.floor(1000 + Math.random() * 9000), width * 0.1, footerTextY2);
 
                 ctx.fillStyle = "#ffffff";
                 ctx.textAlign = "right";
-                ctx.fillText("CURRENTLY SHIPPING", width * 0.75, height * 0.88);
-                ctx.fillStyle = "#ff0066";
-                ctx.fillText("BUILDING THE FUTURE", width * 0.75, height * 0.92);
+                ctx.fillText("CURRENTLY SHIPPING", width * 0.9, footerTextY1);
+                ctx.fillStyle = "#f1c40f";
+                ctx.fillText("BUILDING THE FUTURE", width * 0.9, footerTextY2);
 
                 const dataUrl = canvas.toDataURL("image/png");
                 resultImage.src = dataUrl;
