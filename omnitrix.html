@@ -2,289 +2,409 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HH Goa Frame Selector - Omnitrix</title>
+  <title>3D HH Goa Summoning Watch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #02140c; /* HH Goa dark bg */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
-      color: white;
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .omnitrix-container {
-      position: relative;
-      width: 320px;
-      height: 320px;
+      padding: 0;
+      background: radial-gradient(circle at center, #0a2e1b 0%, #02140c 100%);
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
-    .dial {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 15px solid #111;
-      background: radial-gradient(circle, #fee101 0%, #d4b800 50%, #9e8900 100%);
-      box-shadow: 0 0 30px rgba(254, 225, 1, 0.4), inset 0 0 30px #000;
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* 3D Scene */
+    .scene {
+      width: 400px;
+      height: 400px;
+      perspective: 1000px;
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .watch {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      transform-style: preserve-3d;
+      transform: rotateX(25deg) rotateZ(-15deg);
+      transition: transform 0.5s ease;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: rotateX(25deg) rotateZ(-15deg) translateY(0px); }
+      50% { transform: rotateX(30deg) rotateZ(-10deg) translateY(-20px); }
+    }
+
+    .watch.summoning {
+      animation: summon-spin 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    }
+
+    @keyframes summon-spin {
+      0% { transform: rotateX(25deg) rotateZ(-15deg) scale(1); }
+      50% { transform: rotateX(0deg) rotateZ(180deg) scale(1.2); }
+      100% { transform: rotateX(10deg) rotateZ(360deg) scale(1.1); }
+    }
+
+    /* Watch Straps */
+    .strap {
+      position: absolute;
+      width: 140px;
+      height: 200px;
+      background: linear-gradient(to bottom, #111, #222);
+      left: 55px;
+      border-radius: 10px;
+      border: 4px solid #000;
+      transform-style: preserve-3d;
+    }
+    .strap.top {
+      top: -150px;
+      transform: rotateX(-30deg);
+      transform-origin: bottom center;
+    }
+    .strap.bottom {
+      bottom: -150px;
+      transform: rotateX(30deg);
+      transform-origin: top center;
+    }
+
+    /* Watch Body */
+    .watch-body {
+      position: absolute;
+      inset: 0;
+      background: #111;
+      border-radius: 50%;
+      border: 15px solid #051a0e;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.8), 
+        inset 0 0 20px #000,
+        0 0 0 4px #1a5c3a,
+        0 0 40px rgba(26, 92, 58, 0.5);
+      transform: translateZ(20px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+    }
+
+    /* Glowing inner ring */
+    .ring {
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 8px solid #fee101;
+      box-shadow: 0 0 20px #fee101, inset 0 0 20px #fee101;
+      opacity: 0.8;
+      pointer-events: none;
+      transform: translateZ(5px);
+    }
+    
+    .watch.summoning .ring {
+      animation: pulse-glow 0.5s infinite alternate;
+    }
+    
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 20px #fee101, inset 0 0 20px #fee101; border-color: #fee101; }
+      100% { box-shadow: 0 0 60px #83e02a, inset 0 0 60px #83e02a; border-color: #83e02a; }
+    }
+
+    /* Watch Face / Frame */
+    .watch-face {
+      position: absolute;
+      inset: 25px;
+      background: #000;
+      border-radius: 50%;
       overflow: hidden;
-      cursor: pointer;
+      transform: translateZ(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 3px solid #1a5c3a;
     }
-    
-    .dial:hover {
-      box-shadow: 0 0 50px rgba(254, 225, 1, 0.7), inset 0 0 30px #000;
+
+    .watch-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s;
+      mix-blend-mode: luminosity; /* gives a cool hologram vibe initially */
     }
-    
-    .cross-lines {
+
+    .watch-face img.active {
+      opacity: 1;
+      mix-blend-mode: normal;
+    }
+
+    .cross-pattern {
       position: absolute;
       width: 100%;
       height: 100%;
       clip-path: polygon(20% 0, 80% 0, 50% 40%, 80% 100%, 20% 100%, 50% 60%);
-      background: #111;
+      background: rgba(2, 20, 12, 0.8);
       z-index: 10;
-      pointer-events: none;
+      transition: opacity 0.5s;
     }
 
-    .frame-display {
-      position: absolute;
-      width: 80px;
-      height: 110px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 16px;
-      font-weight: 800;
-      text-align: center;
-      border: 4px solid #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      transition: opacity 0.2s, transform 0.2s, background 0.3s, border-color 0.3s;
-      z-index: 5;
-      background-color: #1a5c3a;
-      color: #fee101;
-      line-height: 1.2;
+    .watch.summoning .cross-pattern {
+      opacity: 0;
     }
 
-    .dial-markers {
+    /* Surrounding Frame Text */
+    .frame-text {
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 50%;
+      animation: rotate-text 10s linear infinite;
+      pointer-events: none;
+      transform: translateZ(15px);
     }
-
-    .marker {
+    
+    .frame-text span {
       position: absolute;
-      width: 15px;
-      height: 30px;
-      background-color: #111;
-      top: -15px;
       left: 50%;
-      transform-origin: 50% 175px; /* radius + border/2 */
-      border-radius: 5px;
-    }
-
-    .controls {
-      position: absolute;
-      bottom: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-    }
-
-    button {
-      background: #111;
+      top: 0;
+      transform-origin: 0 125px; /* radius */
       color: #fee101;
-      border: 2px solid #d4b800;
-      padding: 12px 24px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 8px;
+      font-size: 14px;
       font-weight: bold;
-      box-shadow: 0 0 10px rgba(254, 225, 1, 0.2);
-      transition: 0.2s;
+      text-shadow: 0 0 5px #fee101;
       text-transform: uppercase;
       letter-spacing: 2px;
     }
 
-    button:hover {
-      background: #fee101;
-      color: #111;
-      box-shadow: 0 0 20px rgba(254, 225, 1, 0.6);
-    }
-    
-    button:active {
-      transform: scale(0.95);
+    @keyframes rotate-text {
+      0% { transform: translateZ(15px) rotate(0deg); }
+      100% { transform: translateZ(15px) rotate(360deg); }
     }
 
-    .frame-label {
-      position: absolute;
-      top: -60px;
-      left: 50%;
-      transform: translateX(-50%);
+    /* Status & Controls */
+    .status {
       font-size: 24px;
-      font-weight: 700;
       color: #fee101;
-      text-shadow: 0 0 15px rgba(254, 225, 1, 0.5);
+      text-shadow: 0 0 10px rgba(254, 225, 1, 0.6);
+      margin-bottom: 20px;
+      height: 35px;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      white-space: nowrap;
+      letter-spacing: 2px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    .btn {
+      background: rgba(26, 92, 58, 0.5);
+      border: 1px solid #fee101;
+      color: #fee101;
+      padding: 12px 24px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.3s;
+      box-shadow: 0 0 15px rgba(254, 225, 1, 0.1);
+    }
+
+    .btn:hover {
+      background: #fee101;
+      color: #02140c;
+      box-shadow: 0 0 20px rgba(254, 225, 1, 0.5);
     }
     
-    .pop-animation {
-      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: #555;
+      color: #555;
+      background: #111;
+      box-shadow: none;
     }
-    
-    @keyframes pop {
-      0% { transform: scale(1) rotate(var(--current-rotation)); }
-      50% { transform: scale(1.15) rotate(var(--current-rotation)); box-shadow: 0 0 60px #fee101, inset 0 0 50px #000;}
-      100% { transform: scale(1) rotate(var(--current-rotation)); }
+
+    #downloadBtn {
+      display: none;
     }
-    
-    .flash-overlay {
-      position: absolute;
+
+    /* Flash */
+    .flash {
+      position: fixed;
       inset: 0;
-      background: white;
-      border-radius: 50%;
+      background: #83e02a;
       opacity: 0;
       pointer-events: none;
-      z-index: 20;
+      z-index: 999;
     }
-    
-    .flash-animation {
-      animation: flash 0.5s ease-out;
+    .flash.active {
+      animation: screen-flash 1s ease-out forwards;
     }
-    
-    @keyframes flash {
-      0% { opacity: 0.9; }
+    @keyframes screen-flash {
+      0% { opacity: 1; }
       100% { opacity: 0; }
-    }
-
-    .status-text {
-      position: absolute;
-      bottom: -150px;
-      font-family: monospace;
-      color: #fff;
-      font-size: 14px;
-      opacity: 0.5;
     }
   </style>
 </head>
 <body>
 
-  <div class="omnitrix-container">
-    <div class="frame-label" id="frameLabel">Classic Green</div>
-    
-    <div class="dial" id="dial" onclick="activateOmnitrix()" style="--current-rotation: 0deg;">
-      <div class="dial-markers" id="markers"></div>
-      <div class="cross-lines"></div>
-      <div class="frame-display" id="frameDisplay">HH<br>GOA</div>
-      <div class="flash-overlay" id="flashOverlay"></div>
-    </div>
-    
-    <div class="controls">
-      <button onclick="rotateDial(-1)">◀ Prev</button>
-      <button onclick="rotateDial(1)">Next ▶</button>
-    </div>
+  <div class="status" id="statusText">Awaiting Builder Image...</div>
 
-    <div class="status-text" id="statusText">System Ready. Select a Frame.</div>
+  <div class="scene">
+    <div class="watch" id="watch">
+      <div class="strap top"></div>
+      <div class="strap bottom"></div>
+      <div class="watch-body">
+        <div class="ring"></div>
+        <div class="watch-face">
+          <div class="cross-pattern" id="crossPattern"></div>
+          <img id="userImage" src="" alt="">
+        </div>
+        <!-- Circular Text Frame -->
+        <div class="frame-text" id="frameText"></div>
+      </div>
+    </div>
   </div>
 
+  <div class="controls">
+    <label for="imageUpload" class="btn">Upload Image</label>
+    <input type="file" id="imageUpload" accept="image/*" hidden>
+    
+    <button class="btn" id="summonBtn" disabled>Summon</button>
+    <button class="btn" id="downloadBtn">Generate Photo</button>
+  </div>
+
+  <div class="flash" id="flash"></div>
+
+  <!-- Hidden canvas for generating the final photo -->
+  <canvas id="genCanvas" width="800" height="800" style="display:none;"></canvas>
+
   <script>
-    // Hacker House Goa Frames
-    const frames = [
-      { name: 'Classic Green', bg: '#1a5c3a', color: '#fee101', border: '#fff' },
-      { name: 'Neon Yellow', bg: '#fee101', color: '#02140c', border: '#02140c' },
-      { name: 'Deep Dark', bg: '#02140c', color: '#fee101', border: '#1a5c3a' },
-      { name: 'Ocean Blue', bg: '#0077b6', color: '#ffffff', border: '#00b4d8' },
-      { name: 'Cyber Pink', bg: '#d90429', color: '#ffffff', border: '#ef233c' },
-      { name: 'Minimal White', bg: '#ffffff', color: '#02140c', border: '#cccccc' },
-      { name: 'Hacker Terminal', bg: '#000000', color: '#00ff00', border: '#00ff00' }
-    ];
+    // Circular Text generation
+    const textStr = "HACKER HOUSE GOA · BUILDER PASSPORT · ";
+    const frameTextContainer = document.getElementById('frameText');
+    const chars = textStr.split('');
+    const angleStep = 360 / chars.length;
     
-    let currentIndex = 0;
-    let rotation = 0;
-    
-    const dial = document.getElementById('dial');
-    const display = document.getElementById('frameDisplay');
-    const frameLabel = document.getElementById('frameLabel');
-    const markersContainer = document.getElementById('markers');
-    const flashOverlay = document.getElementById('flashOverlay');
+    chars.forEach((char, i) => {
+      const span = document.createElement('span');
+      span.innerText = char;
+      span.style.transform = `rotate(${i * angleStep}deg) translateY(-105px)`;
+      frameTextContainer.appendChild(span);
+    });
+
+    const imageUpload = document.getElementById('imageUpload');
+    const userImage = document.getElementById('userImage');
+    const summonBtn = document.getElementById('summonBtn');
     const statusText = document.getElementById('statusText');
+    const watch = document.getElementById('watch');
+    const flash = document.getElementById('flash');
+    const crossPattern = document.getElementById('crossPattern');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const genCanvas = document.getElementById('genCanvas');
+    const ctx = genCanvas.getContext('2d');
 
-    // Create markers around the dial
-    const markerCount = frames.length;
-    for(let i = 0; i < markerCount; i++) {
-      const marker = document.createElement('div');
-      marker.className = 'marker';
-      marker.style.transform = `translateX(-50%) rotate(${i * (360/markerCount)}deg)`;
-      markersContainer.appendChild(marker);
-    }
+    let uploadedImgObj = new Image();
 
-    function updateDisplay(index) {
-      const frame = frames[index];
-      display.style.backgroundColor = frame.bg;
-      display.style.color = frame.color;
-      display.style.borderColor = frame.border;
-      frameLabel.innerText = frame.name;
-    }
+    imageUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        userImage.src = url;
+        userImage.classList.remove('active');
+        crossPattern.style.opacity = '1';
+        
+        uploadedImgObj.src = url;
+        uploadedImgObj.onload = () => {
+          summonBtn.disabled = false;
+          statusText.innerText = "Target Locked. Ready to Summon.";
+        }
+      }
+    });
 
-    // Initialize first frame
-    updateDisplay(currentIndex);
-
-    function rotateDial(direction) {
-      // Calculate new index
-      currentIndex = (currentIndex + direction + frames.length) % frames.length;
-      
-      // Update rotation
-      rotation += direction * (360 / frames.length);
-      dial.style.setProperty('--current-rotation', `${rotation}deg`);
-      dial.style.transform = `rotate(${rotation}deg)`;
-      
-      // Animate display change
-      display.style.opacity = 0;
-      // Counter-rotate the display so the frame is always upright
-      display.style.transform = `scale(0.5) rotate(${-rotation}deg)`; 
+    summonBtn.addEventListener('click', () => {
+      summonBtn.disabled = true;
+      statusText.innerText = "SUMMONING...";
+      watch.classList.add('summoning');
       
       setTimeout(() => {
-        updateDisplay(currentIndex);
-        display.style.opacity = 1;
-        display.style.transform = `scale(1) rotate(${-rotation}deg)`;
-      }, 200); // Wait half of the transition time
-    }
-    
-    function activateOmnitrix() {
-      // Trigger pop animation
-      dial.classList.remove('pop-animation');
-      flashOverlay.classList.remove('flash-animation');
+        flash.classList.add('active');
+        userImage.classList.add('active');
+        
+        setTimeout(() => {
+          statusText.innerText = "HACKER HOUSE GOA SUMMONED!";
+          statusText.style.color = "#83e02a";
+          downloadBtn.style.display = "inline-block";
+        }, 500);
+      }, 1000);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      // Draw a cool ID card / Watch frame on canvas
+      ctx.fillStyle = '#02140c';
+      ctx.fillRect(0, 0, 800, 800);
       
-      // Force reflow
-      void dial.offsetWidth;
+      // Draw outer glowing ring
+      ctx.beginPath();
+      ctx.arc(400, 400, 350, 0, Math.PI * 2);
+      ctx.fillStyle = '#1a5c3a';
+      ctx.fill();
       
-      dial.classList.add('pop-animation');
-      flashOverlay.classList.add('flash-animation');
+      ctx.beginPath();
+      ctx.arc(400, 400, 330, 0, Math.PI * 2);
+      ctx.strokeStyle = '#fee101';
+      ctx.lineWidth = 15;
+      ctx.stroke();
+
+      // Draw the uploaded image as a circle
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(400, 400, 300, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
       
-      const selectedFrame = frames[currentIndex].name;
-      statusText.innerText = `>>> ACTIVATED: ${selectedFrame} <<<`;
-      statusText.style.color = '#fee101';
+      // Calculate aspect ratio to cover the circle
+      const size = Math.max(uploadedImgObj.width, uploadedImgObj.height);
+      const scale = 600 / Math.min(uploadedImgObj.width, uploadedImgObj.height);
+      const w = uploadedImgObj.width * scale;
+      const h = uploadedImgObj.height * scale;
+      ctx.drawImage(uploadedImgObj, 400 - w/2, 400 - h/2, w, h);
+      ctx.restore();
+
+      // Draw text around the canvas
+      ctx.save();
+      ctx.translate(400, 400);
+      ctx.font = "bold 40px 'Space Mono', monospace";
+      ctx.fillStyle = "#fee101";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       
-      setTimeout(() => {
-        statusText.style.color = '#fff';
-      }, 1500);
-    }
-    
-    // Initial counter-rotation for display
-    display.style.transform = `rotate(0deg)`;
+      const radStep = (Math.PI * 2) / chars.length;
+      for (let i = 0; i < chars.length; i++) {
+        ctx.save();
+        ctx.rotate(i * radStep);
+        ctx.translate(0, -360);
+        ctx.fillText(chars[i], 0, 0);
+        ctx.restore();
+      }
+      ctx.restore();
+
+      // Download
+      const link = document.createElement('a');
+      link.download = 'HH-Goa-Summoned.png';
+      link.href = genCanvas.toDataURL('image/png');
+      link.click();
+    });
   </script>
 </body>
 </html>
