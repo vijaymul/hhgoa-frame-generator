@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    text {
+      font-family: sans-serif;
+      font-weight: bold;
+      font-size: 45px;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .shadow {
+      fill: none;
+      stroke: #e6ff00;
+      stroke-width: 8px;
+      stroke-linejoin: round;
+    }
+    .main {
+      fill: #ff0066;
+    }
+  </style>
+  <text x="50" y="55" class="shadow">गोवा</text>
+  <text x="50" y="55" class="main">गोवा</text>
+</svg>
