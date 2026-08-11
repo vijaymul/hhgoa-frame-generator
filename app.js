@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const titleInput = document.getElementById("builder-title");
     const rerollBtn = document.getElementById("reroll-btn");
     const xHandleInput = document.getElementById("x-handle");
+    const btnFront = document.getElementById("btn-front");
+    const btnBack = document.getElementById("btn-back");
 
     const resultImage = document.getElementById("result-image");
     const resultImageBack = document.getElementById("result-image-back");
@@ -70,9 +72,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 3. Card Flip Logic
+    function updateFlipButtons() {
+        if (flipCard.classList.contains("flipped")) {
+            btnFront.classList.remove("active");
+            btnBack.classList.add("active");
+        } else {
+            btnFront.classList.add("active");
+            btnBack.classList.remove("active");
+        }
+    }
+
     flipCard.addEventListener("click", () => {
         flipCard.classList.toggle("flipped");
+        updateFlipButtons();
     });
+
+    if (btnFront && btnBack) {
+        btnFront.addEventListener("click", () => {
+            flipCard.classList.remove("flipped");
+            updateFlipButtons();
+        });
+
+        btnBack.addEventListener("click", () => {
+            flipCard.classList.add("flipped");
+            updateFlipButtons();
+        });
+    }
 
     // 4. Image Upload & Cropper Logic
     photoUpload.addEventListener("change", function(e) {
