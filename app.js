@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
             qrImage.src = qrUrl;
             
             qrImage.onload = () => {
-                const qrSize = width * 0.5;
+                const qrSize = width * 0.45;
                 const qrX = width / 2 - qrSize / 2;
                 const qrY = height * 0.35;
                 
@@ -388,11 +388,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Footer Text
                 ctxBack.fillStyle = "#ff0066";
                 ctxBack.font = "bold " + (width * 0.04) + "px 'Inter', sans-serif";
-                ctxBack.fillText("#HH-GOA-" + builderId, width / 2, height * 0.85);
+                ctxBack.fillText("#HH-GOA-" + builderId, width / 2, height * 0.88);
                 
                 ctxBack.fillStyle = "#a0b0a5";
                 ctxBack.font = (width * 0.025) + "px 'Inter', sans-serif";
-                ctxBack.fillText("Scan to connect", width / 2, height * 0.9);
+                ctxBack.fillText("Scan to connect", width / 2, height * 0.93);
 
                 resultImageBack.src = canvasBack.toDataURL("image/png");
                 resolve();
