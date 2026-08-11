@@ -1,10 +1,10 @@
 :root {
-    --primary-green: #0c1410;
-    --secondary-green: #164a2c;
-    --accent-yellow: #f4d03f;
+    --primary-green: #05100a;
+    --secondary-green: #0d2b18;
+    --accent-yellow: #e6ff00;
     --accent-pink: #ff0066;
     --text-light: #f9f9f9;
-    --bg-color: #06110a;
+    --bg-color: #030a05;
 }
 
 * {
@@ -33,13 +33,15 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease, visibility 0.8s ease;
+    transform: translateY(0);
 }
 
 #splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    transform: translateY(-100%);
 }
 
 .splash-content {
@@ -59,7 +61,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    color: #5a705e;
+    color: var(--accent-yellow);
     font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 2px;
@@ -85,11 +87,11 @@ body {
     font-size: clamp(4rem, 12vw, 8rem);
     font-weight: bold;
     text-shadow: 
-        -3px -3px 0 var(--primary-green),  
-         3px -3px 0 var(--primary-green),
-        -3px  3px 0 var(--primary-green),
-         3px  3px 0 var(--primary-green),
-         5px 5px 0px rgba(0,0,0,0.5);
+        -2px -2px 0 #000,  
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000,
+         8px 8px 0px rgba(0,0,0,0.8);
     z-index: 2;
 }
 
@@ -101,7 +103,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    color: #5a705e;
+    color: var(--accent-yellow);
     font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 4px;
@@ -110,7 +112,7 @@ body {
 .splash-footer .line {
     height: 1px;
     width: 50px;
-    background-color: #5a705e;
+    background-color: var(--accent-yellow);
 }
 
 /* App Container - Split Layout */
@@ -130,8 +132,8 @@ body {
     width: 400px;
     padding: 2rem;
     overflow-y: auto;
-    border-right: 1px solid rgba(255,255,255,0.05);
-    background: #040d08;
+    border-right: 1px solid rgba(230, 255, 0, 0.2);
+    background: #05100a;
     display: flex;
     flex-direction: column;
 }
@@ -149,7 +151,7 @@ header {
 
 .logo {
     display: inline-block;
-    color: #5a705e;
+    color: var(--accent-yellow);
     font-weight: 800;
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
@@ -173,7 +175,7 @@ label {
     margin-bottom: 0.5rem;
     font-weight: 600;
     font-size: 0.75rem;
-    color: #a0b0a5;
+    color: var(--accent-yellow);
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
@@ -229,8 +231,8 @@ input[type="text"] {
     width: 100%;
     padding: 12px 14px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.05);
-    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(230, 255, 0, 0.2);
+    background: transparent;
     color: white;
     font-size: 0.95rem;
     font-family: 'Inter', sans-serif;
@@ -240,7 +242,7 @@ input[type="text"] {
 input[type="text"]:focus {
     outline: none;
     border-color: var(--accent-yellow);
-    background: rgba(0,0,0,0.5);
+    background: rgba(230, 255, 0, 0.05);
 }
 
 .file-upload-wrapper {
@@ -264,18 +266,18 @@ input[type="text"]:focus {
     display: block;
     width: 100%;
     padding: 16px;
-    border: 1px dashed rgba(255,255,255,0.1);
+    border: 1px dashed rgba(230, 255, 0, 0.4);
     border-radius: 8px;
     text-align: center;
-    color: #a0b0a5;
+    color: var(--accent-yellow);
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
 .file-upload-wrapper:hover .upload-btn {
-    border-color: var(--secondary-green);
-    color: white;
-    background: rgba(255,255,255,0.02);
+    border-color: var(--accent-yellow);
+    color: #000;
+    background: var(--accent-yellow);
 }
 
 /* Cropper Styles */
@@ -357,7 +359,12 @@ button {
 /* Right Panel: Live Preview */
 .right-panel {
     flex: 1;
-    background: radial-gradient(circle at center, #0a1f12 0%, #030a05 100%);
+    background-color: #07150a;
+    background-image: 
+        linear-gradient(rgba(230, 255, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230, 255, 0, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
     position: relative;
     display: flex;
     justify-content: center;
