@@ -369,8 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Fetch and draw QR Code
             // We use a public QR code API
-            const handleText = xHandle ? (xHandle.startsWith('@') ? xHandle : '@' + xHandle) : 'HHGoa2026';
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://twitter.com/${handleText}`;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://hhgoa-frame-generator-eight.vercel.app/`;
             
             const qrImage = new Image();
             qrImage.crossOrigin = "Anonymous";
