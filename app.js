@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.drawImage(bgImage, 0, 0, width, height);
 
                 const centerX = width / 2;
-                const centerY = height * 0.4;
+                const centerY = height * 0.5;
                 const radius = width * 0.18;
                 
                 ctx.save();
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Dynamic Data Panel
                 const dataBoxTop = nameY + boxHeight/2;
-                const dataBoxHeight = xHandle ? (width * 0.15) : (width * 0.12);
+                const dataBoxHeight = xHandle ? (width * 0.13) : (width * 0.10);
                 
                 ctx.fillStyle = "#0d2818";
                 ctx.fillRect(width * 0.1, dataBoxTop, width * 0.8, dataBoxHeight);
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Footer Panel
-                const footerTop = height * 0.84;
+                const footerTop = height * 0.87;
                 const footerHeight = height - footerTop;
                 
                 ctx.fillStyle = "#0c1410";
